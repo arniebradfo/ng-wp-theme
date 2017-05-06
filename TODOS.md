@@ -1,0 +1,44 @@
+## Components
+- header
+- footer
+- nav
+- post-list
+- post/page
+  - condensed state inside list
+  - expanded state for post page
+- widgets
+  - search
+  - archives
+  - categoires
+  - custom-menu
+  - meta
+  - pages
+- shortcodes
+  - native in wp-includes/media.php
+  - gallery
+  - video
+  - audio
+  - playlist
+  - caption / wp_caption
+- comments
+  - list
+  - submission with instant loading
+  - realtime updates
+- login?
+- password protection
+- image
+  - src-set
+  - lazy-loading?
+- button loader
+
+## Support
+- customizer
+  - with live updates
+  - add any content to the head
+  - add any content to the footer
+- router path - low priority
+  - [link](https://wordpress.stackexchange.com/questions/58625/where-is-permalink-info-stored-in-database)
+- front page
+- # of posts
+- login?
+- SEO visibility
