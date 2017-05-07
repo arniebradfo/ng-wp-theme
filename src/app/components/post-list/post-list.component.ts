@@ -1,23 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { Post } from '../../interfaces/post';
-import { PostsService } from '../../services/posts.service';
+import { WpRestService } from '../../services/wp-rest.service';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'ngwp-post-list',
   templateUrl: './post-list.component.html',
   styleUrls: ['./post-list.component.css'],
-  // providers: [PostsService]
+  // providers: [WpRestService]
 })
 export class PostListComponent implements OnInit {
 
   posts: Post[];
   error: string;
 
-  constructor( private postsService: PostsService, private router: Router ) { }
+  constructor( private wpRestService: WpRestService, private router: Router ) { }
 
   private getPosts() {
-    this.postsService
+    this.wpRestService
       .getPosts()
       .subscribe(res => {
         console.log(res);

@@ -1,14 +1,15 @@
 import { Component, OnInit, ViewChild, ComponentFactoryResolver, ViewContainerRef, AfterViewInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Post } from '../../interfaces/post';
-import { PostsService } from '../../services/posts.service';
+import { WpRestService } from '../../services/wp-rest.service';
+import { DynamicTemplateCompilerService } from '../../services/dynamic-template-compiler.service'
 import { Router, ActivatedRoute, Params } from '@angular/router';
 
 @Component({
   selector: 'ngwp-post',
   templateUrl: './post.component.html',
   styleUrls: ['./post.component.css'],
-  // providers: [PostsService]
+  // providers: [WpRestService]
 })
 export class PostComponent implements OnInit {
 
@@ -18,19 +19,19 @@ export class PostComponent implements OnInit {
   @ViewChild('content', { read: ViewContainerRef }) content;
 
   constructor(
-    private postsService: PostsService,
+    private wpRestService: WpRestService,
     private route: ActivatedRoute,
-    private componentFactoryResolver: ComponentFactoryResolver
+    private dynamicTemplateCompilerService: DynamicTemplateCompilerService
   ) { }
 
   getPost(slug) {
-    this.postsService
+    this.wpRestService
       .getPost(slug)
       .subscribe((res) => {
         // success
         this.post = res[0];
-        const component = this.postsService.createComponentFromString(this.post.content.rendered);
-        const componentFactory = this.postsService.createDynamicComponentFactory(component);
+        const component = this.dynamicTemplateCompilerService.createComponentFromString(this.post.content.rendered);
+        const componentFactory = this.dynamicTemplateCompilerService.createDynamicComponentFactory(component);
         const componentRef = this.content.createComponent(componentFactory);
         componentRef.changeDetectorRef.detectChanges();
       }, (err) => {

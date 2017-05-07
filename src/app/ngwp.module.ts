@@ -4,7 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { NgWpRoutingModule } from './ngwp-routing.module';
 
-import { PostsService } from './services/posts.service';
+import { WpRestService } from './services/wp-rest.service';
+import { DynamicTemplateCompilerService } from './services/dynamic-template-compiler.service';
 import { NgWpComponent } from './ngwp.component';
 import { NavComponent } from './components/nav/nav.component';
 import { PostComponent } from './components/post/post.component';
@@ -28,7 +29,8 @@ import { RecentPostsComponent } from './widgets/recent-posts/recent-posts.compon
     NgWpRoutingModule
   ],
   providers: [
-    PostsService
+    WpRestService,
+    DynamicTemplateCompilerService
   ],
   bootstrap: [NgWpComponent],
   exports: [ // export shortcodes
