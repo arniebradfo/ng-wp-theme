@@ -1,8 +1,7 @@
 {
-  "name": "wpng2",
-  "version": "0.1.0",
+  "name": "ngwp",
+  "version": "0.0.0",
   "license": "MIT",
-  "angular-cli": {},
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -26,7 +25,7 @@
     "zone.js": "^0.8.4"
   },
   "devDependencies": {
-    "@angular/cli": "1.0.0",
+    "@angular/cli": "1.0.2",
     "@angular/compiler-cli": "^4.0.0",
     "@types/jasmine": "2.5.38",
     "@types/node": "~6.0.60",

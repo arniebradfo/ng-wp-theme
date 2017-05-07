@@ -2,29 +2,37 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { NgWpRoutingModule } from './ngwp-routing.module';
 
+import { PostsService } from './services/posts.service';
 import { AppComponent } from './app.component';
-import { PostListComponent } from './posts/post-list/post-list.component';
-import { Wpng2RoutingModule } from './app-routing.module';
-import { PostSingleComponent } from './posts/post-single/post-single.component';
-import { ShortcodeComponent } from './shortcodes/shortcode/shortcode.component';
-import { PostContentResolverService } from './posts/post-content-resolver.service';
+import { NavComponent } from './components/nav/nav.component';
+import { PostComponent } from './components/post/post.component';
+import { PostListComponent } from './components/post-list/post-list.component';
+import { ExampleComponent } from './shortcodes/example/example.component';
+import { RecentPostsComponent } from './widgets/recent-posts/recent-posts.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    NavComponent,
+    PostComponent,
     PostListComponent,
-    PostSingleComponent,
-    ShortcodeComponent
+    ExampleComponent,
+    RecentPostsComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpModule,
-    Wpng2RoutingModule
+    NgWpRoutingModule
   ],
-  providers: [PostContentResolverService],
+  providers: [
+    PostsService
+  ],
   bootstrap: [AppComponent],
-  exports: [ShortcodeComponent]
+  exports: [ // export shortcodes
+    ExampleComponent
+  ]
 })
 export class AppModule { }

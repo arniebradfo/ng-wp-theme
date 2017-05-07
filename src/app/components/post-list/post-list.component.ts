@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { Post } from '../post';
-import { PostsService } from '../posts.service';
+import { Post } from '../../interfaces/post';
+import { PostsService } from '../../services/posts.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-post-list',
+  selector: 'ngwp-post-list',
   templateUrl: './post-list.component.html',
   styleUrls: ['./post-list.component.css'],
-  providers: [PostsService]
+  // providers: [PostsService]
 })
 export class PostListComponent implements OnInit {
 
@@ -32,9 +32,9 @@ export class PostListComponent implements OnInit {
   ngOnInit() {
     this.getPosts();
   }
- 
+
   selectPost(slug) {
-  	this.router.navigate([slug]);
+    this.router.navigate([slug]);
   }
 
 }

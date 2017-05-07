@@ -31,6 +31,25 @@
   - lazy-loading?
 - button loader
 
+## file structure
+- components
+  - nav
+  - post-list
+  - post
+  - comment
+  - comment-form
+  - comment-list
+  - search
+  - image - src-set stuff
+- services
+  - header - manage meta stuff in the head
+  - footer - manage stuff in the footer
+  - ...
+- shortcodes
+  - ...
+- widgets
+ - ...
+
 ## Support
 - customizer
   - with live updates

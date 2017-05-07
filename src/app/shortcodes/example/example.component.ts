@@ -1,11 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-shortcode',
-  templateUrl: './shortcode.component.html',
-  styleUrls: ['./shortcode.component.css']
+  selector: 'ngwp-example',
+  templateUrl: './example.component.html',
+  styleUrls: ['./example.component.css']
 })
-export class ShortcodeComponent implements OnInit {
+export class ExampleComponent implements OnInit {
 
   @Input() input: string;
 

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { PostListComponent } from './posts/post-list/post-list.component';
-import { PostSingleComponent } from './posts/post-single/post-single.component';
+import { PostListComponent } from './components/post-list/post-list.component';
+import { PostComponent } from './components/post/post.component';
 
 const routes: Routes = [
   {
@@ -11,7 +11,7 @@ const routes: Routes = [
   },
   {
     path: ':slug',
-    component: PostSingleComponent
+    component: PostComponent
   }
 ];
 
@@ -20,4 +20,4 @@ const routes: Routes = [
   exports: [RouterModule],
   providers: []
 })
-export class Wpng2RoutingModule { }
+export class NgWpRoutingModule { }

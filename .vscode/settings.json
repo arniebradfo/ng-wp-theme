@@ -1,0 +1,12 @@
+{
+    "files.exclude": {
+        "node_modules/": true,
+        "dist/": true,
+
+        // Angular Testing Stuff
+        "e2e/": true,
+        "**/*.spec.ts":true,
+        "karma.conf.js":true,
+        "protractor.conf.js":true
+    }
+}
