@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ComponentFactoryResolver, ViewContainerRef, AfterViewInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Post } from '../../interfaces/post';
+import { IPost } from '../../interfaces/wp-rest-types';
 import { WpRestService } from '../../services/wp-rest.service';
 import { DynamicTemplateCompilerService } from '../../services/dynamic-template-compiler.service'
 import { Router, ActivatedRoute, Params } from '@angular/router';
@@ -13,7 +13,7 @@ import { Router, ActivatedRoute, Params } from '@angular/router';
 })
 export class PostComponent implements OnInit {
 
-  post: any;
+  post: any; //: IPost;
   error: any;
 
   @ViewChild('content', { read: ViewContainerRef }) content;
