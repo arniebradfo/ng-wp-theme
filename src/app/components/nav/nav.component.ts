@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { IMenu } from '../../interfaces/wp-rest-types';
+import { IMenuItem } from '../../interfaces/wp-rest-types';
 import { WpRestService } from '../../services/wp-rest.service';
 
 @Component({
@@ -9,8 +9,7 @@ import { WpRestService } from '../../services/wp-rest.service';
 })
 export class NavComponent implements OnInit {
 
-  public menu: IMenu;
-  public menuContext;
+  public menu: IMenuItem[];
   public error: any;
 
   @Input() name: string;
@@ -25,7 +24,6 @@ export class NavComponent implements OnInit {
       .getMenu(this.name)
       .subscribe(res => {
         this.menu = res;
-        this.menuContext = { menu: this.menu };
         console.log(this.menu);
       }, err => {
         this.error = err;

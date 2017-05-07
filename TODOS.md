@@ -1,5 +1,7 @@
 # TODOs
 - create menu
+  - make menu route to pages
+- make post list route to pages
 
 ## Links
 - [WP REST API](https://developer.wordpress.org/rest-api/)

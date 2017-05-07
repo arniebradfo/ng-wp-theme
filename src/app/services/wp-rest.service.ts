@@ -6,7 +6,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 
 import { environment } from '../../environments/environment';
-import { IMenu, IPost } from '../interfaces/wp-rest-types';
+import { IMenuItem, IPost } from '../interfaces/wp-rest-types';
 
 @Injectable()
 export class WpRestService {
@@ -52,7 +52,7 @@ export class WpRestService {
       return err;
   }
 
-  public getMenu(name: string): Observable<IMenu> {
+  public getMenu(name: string): Observable<IMenuItem[]> {
     return this.http
       .get(this._wpMenus + `menu-locations/${name}`)
       .map((res: Response) => res.json())
