@@ -32,6 +32,7 @@ export class PostComponent implements OnInit {
         this.post = res[0];
         const component = this.dynamicTemplateCompilerService.createComponentFromString(this.post.content.rendered);
         const componentFactory = this.dynamicTemplateCompilerService.createDynamicComponentFactory(component);
+        // TODO: research ViewContainerRef.createEmbeddedView()
         const componentRef = this.content.createComponent(componentFactory);
         componentRef.changeDetectorRef.detectChanges();
       }, (err) => {
