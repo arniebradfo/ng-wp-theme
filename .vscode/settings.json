@@ -2,6 +2,7 @@
     "files.exclude": {
         "node_modules/": true,
         "dist/": true,
+        "_old/": true,
 
         // Angular Testing Stuff
         "e2e/": true,
