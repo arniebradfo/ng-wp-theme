@@ -29,9 +29,9 @@ export class PostComponent implements OnInit {
       .subscribe((res) => {
         // success
         this.post = res[0];
-        let component = this.postsService.createDynamicComponent(this.post.content.rendered);
-        let componentFactory = this.postsService.createAdHocComponentFactory(component);
-        let componentRef = this.content.createComponent(componentFactory);
+        const component = this.postsService.createComponentFromString(this.post.content.rendered);
+        const componentFactory = this.postsService.createDynamicComponentFactory(component);
+        const componentRef = this.content.createComponent(componentFactory);
         componentRef.changeDetectorRef.detectChanges();
       }, (err) => {
         // error
@@ -42,7 +42,7 @@ export class PostComponent implements OnInit {
   ngOnInit() {
 
     this.route.params.forEach((params: Params) => {
-      let slug = params['slug'];
+      const slug = params['slug'];
       this.getPost(slug);
     });
 

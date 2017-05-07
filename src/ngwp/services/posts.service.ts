@@ -49,7 +49,7 @@ export class PostsService {
         });
   }
 
-  public createDynamicComponent(tmpl: string): Type<any> {
+  public createComponentFromString(tmpl: string): Type<any> {
     @Component({
       template: tmpl
     })
@@ -57,14 +57,15 @@ export class PostsService {
     return InsertedComponent;
   }
 
-  public createAdHocComponentFactory(component: any): ComponentFactory<any> {
+  public createDynamicComponentFactory(component: any): ComponentFactory<any> {
     @NgModule({
       declarations: [component],
       entryComponents: [component],
       imports: [ NgWpModule, CommonModule ],
     })
-    class AdHocModule { }
-    const factory = this.compiler.compileModuleAndAllComponentsSync(AdHocModule).componentFactories
+    class DynamicModule { }
+
+    const factory = this.compiler.compileModuleAndAllComponentsSync(DynamicModule).componentFactories
       .find(fact => fact.componentType === component);
     return factory;
   }

@@ -1,6 +1,9 @@
 # TODOs
 - 
 
+## Links
+- [WP REST API](https://developer.wordpress.org/rest-api/)
+- [Menus for WP REST API](https://wordpress.org/plugins/wp-api-menus/)
 
 ## Components
 - header

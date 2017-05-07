@@ -16,14 +16,14 @@ export class PostListComponent implements OnInit {
 
   constructor( private postsService: PostsService, private router: Router ) { }
 
-  getPosts(){
+  private getPosts() {
     this.postsService
       .getPosts()
       .subscribe(res => {
-        // success
+        console.log(res);
         this.posts = res;
       }, err => {
-        // error
+        console.log(err);
         this.error = err;
       });
 
