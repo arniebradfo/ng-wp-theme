@@ -1,5 +1,9 @@
 # TODOs
-- 
+- split posts service
+  - add wp-rest-api service
+    - dynamically finds the host address so no more environment BS
+  - create content rendering service
+- create menu
 
 ## Links
 - [WP REST API](https://developer.wordpress.org/rest-api/)
