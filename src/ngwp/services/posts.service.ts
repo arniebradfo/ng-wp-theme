@@ -9,7 +9,7 @@ import {
   ComponentFactory,
   Compiler
 } from '@angular/core';
-import { AppModule } from '../app.module';
+import { NgWpModule } from '../ngwp.module';
 import { CommonModule } from '@angular/common';
 import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
@@ -61,7 +61,7 @@ export class PostsService {
     @NgModule({
       declarations: [component],
       entryComponents: [component],
-      imports: [ AppModule, CommonModule ],
+      imports: [ NgWpModule, CommonModule ],
     })
     class AdHocModule { }
     const factory = this.compiler.compileModuleAndAllComponentsSync(AdHocModule).componentFactories

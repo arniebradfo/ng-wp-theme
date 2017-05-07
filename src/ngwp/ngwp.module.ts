@@ -5,7 +5,7 @@ import { HttpModule } from '@angular/http';
 import { NgWpRoutingModule } from './ngwp-routing.module';
 
 import { PostsService } from './services/posts.service';
-import { AppComponent } from './app.component';
+import { NgWpComponent } from './ngwp.component';
 import { NavComponent } from './components/nav/nav.component';
 import { PostComponent } from './components/post/post.component';
 import { PostListComponent } from './components/post-list/post-list.component';
@@ -14,7 +14,7 @@ import { RecentPostsComponent } from './widgets/recent-posts/recent-posts.compon
 
 @NgModule({
   declarations: [
-    AppComponent,
+    NgWpComponent,
     NavComponent,
     PostComponent,
     PostListComponent,
@@ -30,9 +30,9 @@ import { RecentPostsComponent } from './widgets/recent-posts/recent-posts.compon
   providers: [
     PostsService
   ],
-  bootstrap: [AppComponent],
+  bootstrap: [NgWpComponent],
   exports: [ // export shortcodes
     ExampleComponent
   ]
 })
-export class AppModule { }
+export class NgWpModule { }

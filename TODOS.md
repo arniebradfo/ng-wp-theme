@@ -1,3 +1,7 @@
+# TODOs
+- 
+
+
 ## Components
 - header
 - footer
