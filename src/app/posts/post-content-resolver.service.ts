@@ -15,22 +15,20 @@ import { AppModule } from '../app.module';
 import { JitCompilerFactory } from '@angular/compiler';
 
 export interface IHaveDynamicData {
-    entity: any;
+  entity: any;
 }
 
 @Injectable()
 export class PostContentResolverService {
 
-
   // this object is singleton - so we can use this as a cache
   private _cacheOfFactories: { [templateKey: string]: ComponentFactory<IHaveDynamicData> } = {};
 
   // wee need Dynamic component builder
-  private compiler: Compiler = new JitCompilerFactory([{useDebug: false, useJit: true}]).createCompiler();
+  private compiler: Compiler = new JitCompilerFactory([{ useDebug: false, useJit: true }]).createCompiler();
   // constructor(
-  //   // protected compiler: JitCompiler
+  //   private compiler: Compiler
   // ) { }
-
 
   public createComponentFactory(template: string): Promise<ComponentFactory<IHaveDynamicData>> {
 
@@ -38,7 +36,6 @@ export class PostContentResolverService {
 
     if (factory) {
       console.log('Module and Type are returned from cache');
-
       return new Promise((resolve) => {
         resolve(factory);
       });
@@ -49,18 +46,9 @@ export class PostContentResolverService {
     let module = this.createComponentModule(type);
 
     return new Promise((resolve) => {
-      // this.compiler
-      //   .compileModuleAndAllComponentsSync(module)
-      //   .componentFactories
-      //   .find(fact => fact.componentType === component);
-
-      // return factory;
-
       this.compiler
         .compileModuleAndAllComponentsAsync(module)
         .then((moduleWithFactories) => {
-          // factory = _
-          // .find(moduleWithFactories.componentFactories, { componentType: type });
           factory = moduleWithFactories.componentFactories
             .find(fact => fact.componentType === type);
 
@@ -85,8 +73,9 @@ export class PostContentResolverService {
   protected createComponentModule(componentType: any) {
     @NgModule({
       declarations: [componentType],
-       imports: [ AppModule, CommonModule ],
-   })
+      entryComponents: [componentType],
+      imports: [AppModule, CommonModule],
+    })
     class RuntimeComponentModule { }
     // a module for just this Type
     return RuntimeComponentModule;
