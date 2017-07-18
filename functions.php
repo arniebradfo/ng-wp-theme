@@ -76,7 +76,7 @@
         return $output;
 
     }
-    add_shortcode( 'app-shortcode', 'shortcode_func' );
+    add_shortcode( 'ngwp-example', 'shortcode_func' );
     // add_shortcode( 'any-tag-name-you-want', 'shortcode_func' );
 
 	remove_filter('the_content', 'wpautop');
