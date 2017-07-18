@@ -16,7 +16,7 @@ export class PostComponent implements OnInit {
   post: any; //: IPost;
   error: any;
 
-  @ViewChild('content', { read: ViewContainerRef }) content;
+  @ViewChild('content') content;
 
   constructor(
     private wpRestService: WpRestService,
@@ -30,11 +30,20 @@ export class PostComponent implements OnInit {
       .subscribe((res) => {
         // success
         this.post = res[0];
-        const component = this.dynamicTemplateCompilerService.createComponentFromString(this.post.content.rendered);
-        const componentFactory = this.dynamicTemplateCompilerService.createDynamicComponentFactory(component);
+
+        console.log(this.post.content.rendered);
+
+        console.log(this.content.nativeElement);
+
+        this.content.nativeElement.innerHTML = this.post.content.rendered;
+
+        // const component = this.dynamicTemplateCompilerService.createComponentFromString(this.post.content.rendered);
+        // const componentFactory = this.dynamicTemplateCompilerService.createDynamicComponentFactory(component);
         // TODO: research ViewContainerRef.createEmbeddedView()
-        const componentRef = this.content.createComponent(componentFactory);
-        componentRef.changeDetectorRef.detectChanges();
+        // const componentRef = this.content.createComponent(componentFactory);
+
+
+        // componentRef.changeDetectorRef.detectChanges();
       }, (err) => {
         // error
         this.error = err;

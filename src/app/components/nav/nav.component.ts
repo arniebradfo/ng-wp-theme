@@ -24,10 +24,10 @@ export class NavComponent implements OnInit {
       .getMenu(this.name)
       .subscribe(res => {
         this.menu = res;
-        console.log(this.menu);
+        // console.log(this.menu);
       }, err => {
         this.error = err;
-        console.log(this.error);
+        // console.log(this.error);
       });
   }
 
