@@ -23,6 +23,9 @@ import { PostContentResolverService } from './posts/post-content-resolver.servic
     HttpModule,
     Wpng2RoutingModule
   ],
+  entryComponents: [
+    ShortcodeComponent
+  ],
   providers: [PostContentResolverService],
   bootstrap: [AppComponent],
   exports: [ShortcodeComponent]

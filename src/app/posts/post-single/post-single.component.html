@@ -1,9 +1,9 @@
-<article>
-  <h1 *ngIf="post">
-    {{ post.title.rendered }}
-  </h1>
-  <div #content style="display:none;"></div>
-  <div *ngIf="!post">
-    no post found
-  </div>
+<h1 *ngIf="post">
+  {{ post.title.rendered }}
+</h1>
+<div id="test"></div>
+<article [innerHTML]="content">
 </article>
+<div *ngIf="!post">
+  no post found
+</div>

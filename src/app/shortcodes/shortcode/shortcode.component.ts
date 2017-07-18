@@ -7,7 +7,7 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class ShortcodeComponent implements OnInit {
 
-  @Input() input: string;
+  @Input() input: string = 'not yay';
 
   constructor() { }
 
