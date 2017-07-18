@@ -31,19 +31,16 @@ export class PostComponent implements OnInit {
         // success
         this.post = res[0];
 
-        console.log(this.post.content.rendered);
-
-        console.log(this.content.nativeElement);
-
-        // this.content.nativeElement.innerHTML = this.post.content.rendered;
+        // console.log(this.post.content.rendered);
+        // console.log(this.content.nativeElement);
+        // this.content.nativeElement.innerHTML = this.post.content.rendered; // this doesn't render in JIT
 
         const component = this.dynamicTemplateCompilerService.createComponentFromString(this.post.content.rendered);
         const componentFactory = this.dynamicTemplateCompilerService.createDynamicComponentFactory(component);
         // TODO: research ViewContainerRef.createEmbeddedView();
         const componentRef = this.content.createComponent(componentFactory);
 
-
-        // componentRef.changeDetectorRef.detectChanges();
+        componentRef.changeDetectorRef.detectChanges();
       }, (err) => {
         // error
         this.error = err;
