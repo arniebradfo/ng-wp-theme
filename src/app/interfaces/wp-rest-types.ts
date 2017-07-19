@@ -35,7 +35,7 @@ export interface IPost {
     date_gmt: string; // Date?
     excerpt: IProtectedContent;
     featured_media: number;
-    format: string; // 'standard' // string list
+    format:  'standard' | 'link' | 'video' | 'aside' | 'audio' | 'chat' | 'gallery' | 'image' | 'quote' | 'status' ;
     guid: IContent;
     id: number[];
     link: string; // URL?
