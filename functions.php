@@ -64,7 +64,6 @@
 	add_action( 'admin_init', 'add_editor_styles' );
 
     function shortcode_func( $atts, $content=null, $tag='' ) {
-        
         $output = '<'.$tag.' ';               // opening tag
         foreach($atts as $att => $val) {
             $output .= $att.'="'.$val.'" ';   // echo all attributes from the shorcode
@@ -74,7 +73,6 @@
         $output .= '</'.$tag.'>';             // closing tag
 
         return $output;
-
     }
     add_shortcode( 'ngwp-example', 'shortcode_func' );
     // add_shortcode( 'any-tag-name-you-want', 'shortcode_func' );

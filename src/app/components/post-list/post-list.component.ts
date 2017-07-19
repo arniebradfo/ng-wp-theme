@@ -21,6 +21,8 @@ export class PostListComponent implements OnInit {
       .getPosts()
       .subscribe(res => {
         this.posts = res;
+        console.log(res);
+        
       }, err => {
         this.error = err;
       });
