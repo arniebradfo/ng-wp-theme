@@ -1,5 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { registerComponent } from 'app/app-component-registry';
 
+@registerComponent
 @Component({
   selector: 'ngwp-example',
   templateUrl: './example.component.html',

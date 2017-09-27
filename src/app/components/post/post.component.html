@@ -2,7 +2,7 @@
   <h1 *ngIf="post">
     {{ post.title.rendered }}
   </h1>
-  <div #content></div>
+  <div #content [innerHtml]="postContent"></div>
   <div *ngIf="!post">
     no post found
   </div>
