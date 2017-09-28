@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, HostBinding, ViewContainerRef, ViewChild, ElementRef } from '@angular/core';
 import { registerComponent } from 'app/app-component-registry';
 
 @registerComponent
@@ -10,6 +10,7 @@ import { registerComponent } from 'app/app-component-registry';
 export class ExampleComponent implements OnInit {
 
   @Input() input: string;
+  @ViewChild('content', {read: ElementRef}) htmlInsertionRef: ElementRef;
 
   constructor() { }
 

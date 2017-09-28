@@ -59,7 +59,7 @@ export class PostComponent implements OnInit, OnDestroy {
         window.setTimeout(() => {
           const componentSet = this.content.nativeElement.querySelectorAll('[data-component]');
 
-          // need to find the lowest first
+          // TODO: need to find the highest first? test with nested elements
           for (let i = 0; i < componentSet.length; i++) {
             const node: Node = componentSet[i];
             const component = COMPONENTREGISTRY.getTypeFor(componentSet[0].dataset.component);
@@ -78,6 +78,14 @@ export class PostComponent implements OnInit, OnDestroy {
               const attr = node.attributes.item(j);
               (<any>componentRef.instance)[attr.name] = attr.value; // maybe use eval()
               this.renderer.setAttribute(componentRoot, attr.name, attr.value);
+            }
+
+            while (node.childNodes.length > 0) {
+              // TODO: write an inteface for this
+              this.renderer.appendChild(
+                (<any>componentRef.instance).htmlInsertionRef.nativeElement.parentNode,
+                node.childNodes[0]
+              );
             }
             this.renderer.removeChild(node.parentNode, node);
           }
