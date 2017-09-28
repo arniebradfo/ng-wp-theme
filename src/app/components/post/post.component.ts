@@ -9,7 +9,8 @@ import {
   Renderer2,
   ApplicationRef,
   Injector,
-  EmbeddedViewRef
+  EmbeddedViewRef,
+  OnDestroy
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { IPost } from '../../interfaces/wp-rest-types';
@@ -27,11 +28,13 @@ import { HtmlContainer } from 'app/services/html-container';
   styleUrls: ['./post.component.css'],
   // providers: [WpRestService]
 })
-export class PostComponent implements OnInit {
+export class PostComponent implements OnInit, OnDestroy {
 
-  post: any; //: IPost;
+  post: any; // : IPost;
   error: any;
   postContent: SafeHtml;
+
+  destroyDynamicComponents:  (() => void)[] = [];
 
   @ViewChild('content', { read: ViewContainerRef }) contentViewContainerRef: ViewContainerRef;
   @ViewChild('content', { read: ElementRef }) content: ElementRef;
@@ -56,19 +59,20 @@ export class PostComponent implements OnInit {
         window.setTimeout(() => {
           const componentSet = this.content.nativeElement.querySelectorAll('[data-component]');
 
-          // foreach in componentSet
-          const node = componentSet[0];
-          const component = COMPONENTREGISTRY.getTypeFor(componentSet[0].dataset.component);
-          const componentFactory = this.componentFactoryResolver.resolveComponentFactory(component);
-          const componentRef = componentFactory.create(this.injector);
-          this.applicationRef.attachView(componentRef.hostView);
-          const disposeComponentRef = () => {
-            this.applicationRef.detachView(componentRef.hostView);
-            componentRef.destroy();
-          };
-          this.renderer.insertBefore(node.parentNode, (componentRef.hostView as EmbeddedViewRef<any>).rootNodes[0], node);
-          this.renderer.removeChild(node.parentNode, node);
-
+          // need to find the lowest first
+          for (var i = 0; i < componentSet.length; i++) {
+            const node = componentSet[i];
+            const component = COMPONENTREGISTRY.getTypeFor(componentSet[0].dataset.component);
+            const componentFactory = this.componentFactoryResolver.resolveComponentFactory(component);
+            const componentRef = componentFactory.create(this.injector);
+            this.applicationRef.attachView(componentRef.hostView);
+            this.destroyDynamicComponents.push(() => {
+              this.applicationRef.detachView(componentRef.hostView);
+              componentRef.destroy();
+            });
+            this.renderer.insertBefore(node.parentNode, (componentRef.hostView as EmbeddedViewRef<any>).rootNodes[0], node);
+            this.renderer.removeChild(node.parentNode, node);
+          }
         }, 0);
 
       }, (error) => {
@@ -83,6 +87,10 @@ export class PostComponent implements OnInit {
       this.getPost(slug);
     });
 
+  }
+
+  ngOnDestroy() {
+    this.destroyDynamicComponents.forEach(destroyDynamicComponent => destroyDynamicComponent());
   }
 
 }
