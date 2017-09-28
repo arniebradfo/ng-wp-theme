@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ComponentFactoryResolver, ViewContainerRef, AfterViewInit, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ComponentFactoryResolver, ViewContainerRef, AfterViewInit, ElementRef, Renderer2 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { IPost } from '../../interfaces/wp-rest-types';
 import { WpRestService } from '../../services/wp-rest.service';
@@ -17,14 +17,15 @@ export class PostComponent implements OnInit {
   error: any;
   postContent: SafeHtml;
 
-  @ViewChild('content', { read: ViewContainerRef }) contentRef: ViewContainerRef;
-  @ViewChild('content', { read: ElementRef }) contentEl: ElementRef;
+  @ViewChild('content', { read: ViewContainerRef }) contentViewContainerRef: ViewContainerRef;
+  @ViewChild('contentWrapper', { read: ElementRef }) contentWrapper: ElementRef;
 
   constructor(
     private wpRestService: WpRestService,
     private route: ActivatedRoute,
     private domSanitizer: DomSanitizer,
-    private componentFactoryResolver: ComponentFactoryResolver
+    private componentFactoryResolver: ComponentFactoryResolver,
+    private renderer: Renderer2
   ) { }
 
   getPost(slug) {
@@ -34,23 +35,27 @@ export class PostComponent implements OnInit {
         // success
         this.post = res[0];
         this.postContent = this.domSanitizer.bypassSecurityTrustHtml(this.post.content.rendered);
-        console.log(this.post.content.rendered);
-        console.log(this.contentRef, this.contentEl);
 
-        window.setTimeout(() => {
-          const componentSet = this.contentEl.nativeElement.querySelectorAll('[data-component]');
-          console.log(componentSet);
+        let container = this.renderer.createElement('div');
+        this.renderer.setProperty(container, 'innerHTML', this.postContent);
 
-          // foreach in componentSet
-          const node = componentSet[0];
-          const nodeIndex = [].indexOf.call(node.parentNode.childNodes, node);
-          console.log(nodeIndex);
+        const componentSet = container.querySelectorAll('[data-component]');
+        console.log(componentSet);
 
-          let component = COMPONENTREGISTRY.getTypeFor(componentSet[0].dataset.component);
-          let componentFactory = this.componentFactoryResolver.resolveComponentFactory(component);
-          this.contentRef.createComponent(componentFactory, 0);
+        while (container.childNodes.length > 0) {
+          console.log(container.childNodes);
+          this.renderer.appendChild(this.contentWrapper.nativeElement, container.firstChild);
+        }
 
-        }, 0);
+        // foreach in componentSet
+        const node = componentSet[0];
+        const nodeIndex = [].indexOf.call(node.parentNode.childNodes, node);
+        console.log(nodeIndex);
+
+        let component = COMPONENTREGISTRY.getTypeFor(componentSet[0].dataset.component);
+        let componentFactory = this.componentFactoryResolver.resolveComponentFactory(component);
+        this.contentViewContainerRef.createComponent(componentFactory, nodeIndex);
+
 
         // this.content.nativeElement.innerHTML = this.post.content.rendered; // this doesn't render in JIT
 
