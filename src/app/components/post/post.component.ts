@@ -8,7 +8,8 @@ import {
   ElementRef,
   Renderer2,
   ApplicationRef,
-  Injector
+  Injector,
+  EmbeddedViewRef
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { IPost } from '../../interfaces/wp-rest-types';
@@ -16,6 +17,9 @@ import { WpRestService } from '../../services/wp-rest.service';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { COMPONENTREGISTRY } from 'app/app-component-registry';
 import { HtmlContainer } from 'app/services/html-container';
+
+// insert component anywhere:
+// https://stackoverflow.com/a/41950786/5648839
 
 @Component({
   selector: 'ngwp-post',
@@ -45,46 +49,30 @@ export class PostComponent implements OnInit {
   getPost(slug) {
     this.wpRestService
       .getPost(slug)
-      .subscribe((res) => {
-        // success
-        this.post = res[0];
+      .subscribe((response) => {
+        this.post = response[0];
         this.postContent = this.domSanitizer.bypassSecurityTrustHtml(this.post.content.rendered);
-
-        // let container = this.renderer.createElement('div');
-        // this.renderer.setProperty(container, 'innerHTML', this.post.content.rendered);
 
         window.setTimeout(() => {
           const componentSet = this.content.nativeElement.querySelectorAll('[data-component]');
 
-          console.log(componentSet);
           // foreach in componentSet
           const node = componentSet[0];
-          const nodeIndex = [].indexOf.call(node.parentNode.childNodes, node);
-          console.log(nodeIndex);
-
-          let container = new HtmlContainer(node, this.applicationRef, this.componentFactoryResolver, this.injector);
-          let component = COMPONENTREGISTRY.getTypeFor(componentSet[0].dataset.component);
-          let componentRef = container.attach(component);
-
-
-          // let componentFactory = this.componentFactoryResolver.resolveComponentFactory(component);
-          // this.contentViewContainerRef.createComponent(componentFactory, nodeIndex);
-
+          const component = COMPONENTREGISTRY.getTypeFor(componentSet[0].dataset.component);
+          const componentFactory = this.componentFactoryResolver.resolveComponentFactory(component);
+          const componentRef = componentFactory.create(this.injector);
+          this.applicationRef.attachView(componentRef.hostView);
+          const disposeComponentRef = () => {
+            this.applicationRef.detachView(componentRef.hostView);
+            componentRef.destroy();
+          };
+          this.renderer.insertBefore(node.parentNode, (componentRef.hostView as EmbeddedViewRef<any>).rootNodes[0], node);
+          this.renderer.removeChild(node.parentNode, node);
 
         }, 0);
 
-
-        // this.content.nativeElement.innerHTML = this.post.content.rendered; // this doesn't render in JIT
-
-        // const component = this.dynamicTemplateCompilerService.createComponentFromString(this.post.content.rendered);
-        // const componentFactory = this.dynamicTemplateCompilerService.createDynamicComponentFactory(component);
-        // // TODO: research ViewContainerRef.createEmbeddedView();
-        // const componentRef = this.content.createComponent(componentFactory);
-
-        // componentRef.changeDetectorRef.detectChanges();
-      }, (err) => {
-        // error
-        this.error = err;
+      }, (error) => {
+        this.error = error;
       });
   }
 
