@@ -60,8 +60,8 @@ export class PostComponent implements OnInit, OnDestroy {
           const componentSet = this.content.nativeElement.querySelectorAll('[data-component]');
 
           // need to find the lowest first
-          for (var i = 0; i < componentSet.length; i++) {
-            const node = componentSet[i];
+          for (let i = 0; i < componentSet.length; i++) {
+            const node: Node = componentSet[i];
             const component = COMPONENTREGISTRY.getTypeFor(componentSet[0].dataset.component);
             const componentFactory = this.componentFactoryResolver.resolveComponentFactory(component);
             const componentRef = componentFactory.create(this.injector);
@@ -70,7 +70,15 @@ export class PostComponent implements OnInit, OnDestroy {
               this.applicationRef.detachView(componentRef.hostView);
               componentRef.destroy();
             });
-            this.renderer.insertBefore(node.parentNode, (componentRef.hostView as EmbeddedViewRef<any>).rootNodes[0], node);
+
+            const componentRoot: HTMLElement = (componentRef.hostView as EmbeddedViewRef<any>).rootNodes[0];
+            this.renderer.insertBefore(node.parentNode, componentRoot, node);
+
+            for (let j = 0; j < node.attributes.length; j++) {
+              const attr = node.attributes.item(j);
+              (<any>componentRef.instance)[attr.name] = attr.value; // maybe use eval()
+              this.renderer.setAttribute(componentRoot, attr.name, attr.value);
+            }
             this.renderer.removeChild(node.parentNode, node);
           }
         }, 0);

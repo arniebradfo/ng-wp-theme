@@ -42,7 +42,6 @@ class ComponentRegistry {
     }
 
     register(cls: ComponentClass): void {
-        console.dir(cls);
         this.registry.set(cls.name, cls);
     }
 

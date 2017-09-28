@@ -31,10 +31,6 @@ export class HtmlContainer {
             componentRef.destroy();
         };
 
-        // this.renderer.insertBefore()
-
-        console.log(componentRef);
-        
         this.hostElement.appendChild((componentRef.hostView as EmbeddedViewRef<any>).rootNodes[0]);
 
         return componentRef;
