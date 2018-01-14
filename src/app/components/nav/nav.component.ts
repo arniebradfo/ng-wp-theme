@@ -35,4 +35,11 @@ export class NavComponent implements OnInit {
     this.getMenus();
   }
 
+  // get the WP slug out of a url. assumes there is only one slug in the url
+  parseSlug(url: string): string {
+    const parsedURL = new URL(url);
+    const slug = parsedURL.pathname.replace('/', '');
+    return slug;
+  }
+
 }

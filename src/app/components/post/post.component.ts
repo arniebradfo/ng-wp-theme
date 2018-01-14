@@ -17,7 +17,6 @@ import { IPost } from '../../interfaces/wp-rest-types';
 import { WpRestService } from '../../services/wp-rest.service';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { COMPONENTREGISTRY } from 'app/app-component-registry';
-import { HtmlContainer } from 'app/services/html-container';
 
 // insert component anywhere:
 // https://stackoverflow.com/a/41950786/5648839
@@ -61,6 +60,8 @@ export class PostComponent implements OnInit, OnDestroy {
 
           // TODO: need to find the highest first? test with nested elements
           for (let i = 0; i < componentSet.length; i++) {
+
+            // get the un-angular element and make it an angular component
             const node: Node = componentSet[i];
             const component = COMPONENTREGISTRY.getTypeFor(componentSet[0].dataset.component);
             const componentFactory = this.componentFactoryResolver.resolveComponentFactory(component);
@@ -71,15 +72,18 @@ export class PostComponent implements OnInit, OnDestroy {
               componentRef.destroy();
             });
 
+            // insert the Angualr component
             const componentRoot: HTMLElement = (componentRef.hostView as EmbeddedViewRef<any>).rootNodes[0];
             this.renderer.insertBefore(node.parentNode, componentRoot, node);
 
+            // add attributes to the html element and properties to the component class
             for (let j = 0; j < node.attributes.length; j++) {
               const attr = node.attributes.item(j);
               (<any>componentRef.instance)[attr.name] = attr.value; // maybe use eval()
               this.renderer.setAttribute(componentRoot, attr.name, attr.value);
             }
 
+            // add all the children to the new component element
             while (node.childNodes.length > 0) {
               // TODO: write an inteface for this
               this.renderer.appendChild(
@@ -87,6 +91,8 @@ export class PostComponent implements OnInit, OnDestroy {
                 node.childNodes[0]
               );
             }
+
+            // remove the old component
             this.renderer.removeChild(node.parentNode, node);
           }
         }, 0);

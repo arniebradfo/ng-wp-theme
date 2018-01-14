@@ -1,5 +1,8 @@
 <ul>
-  <li *ngFor="let post of posts" (click)="selectPost(post.slug)">
+  <li 
+    *ngFor="let post of posts" 
+    [routerLink]="post.slug"
+    >
     {{ post.title.rendered }}
   </li>
 </ul>

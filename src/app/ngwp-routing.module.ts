@@ -15,6 +15,21 @@ const routes: Routes = [
   }
 ];
 
+// /{post}/
+// /{post}/{page-number}/
+// /{post}/comment-page-{number}/#comments
+
+// /category|tag|author/{category|tag|author}/
+// /category|tag|author/{category|tag|author}/page/{page-number}/
+
+// /?s={search-term}
+// /page/{page-number}/?s={search-term}
+
+// /wp-admin/* reroutes to backend
+
+// password protected stuff
+
+
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],

@@ -1,6 +1,7 @@
 import { ApplicationRef, ComponentFactoryResolver, Injector, ComponentRef, EmbeddedViewRef, Type, Renderer2 } from '@angular/core';
 
 // https://stackoverflow.com/a/41950786/5648839
+// delete me?
 
 export class HtmlContainer {
     private attached: boolean = false;
