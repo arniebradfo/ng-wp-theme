@@ -14,6 +14,7 @@ export class WpRestService {
   private _wpDomain: string = environment.wpBase;
   private _wpRest: string = this._wpDomain + 'wp-json/wp/v2/';
   private _wpMenus: string = this._wpDomain + 'wp-json/wp-api-menus/v2/';
+  private _wpSlug: string = this._wpDomain + 'wp-json/slug/';
 
 
   constructor(
@@ -30,9 +31,9 @@ export class WpRestService {
       });
   }
 
-  public getPost(slug): Observable<IPost> {
+  public getPost(slug: string): Observable<IPost> {
     return this.http
-      .get(this._wpRest + `posts?slug=${slug}`)
+      .get(this._wpSlug + slug)
       .map((res: Response) => res.json())
       .catch((err: Response | any) => {
         console.error(err);

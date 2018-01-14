@@ -52,7 +52,7 @@ export class PostComponent implements OnInit, OnDestroy {
     this.wpRestService
       .getPost(slug)
       .subscribe((response) => {
-        this.post = response[0];
+        this.post = response;
         this.postContent = this.domSanitizer.bypassSecurityTrustHtml(this.post.content.rendered);
 
         window.setTimeout(() => {

@@ -80,14 +80,17 @@
 
 	// register route to get page or post by slug
 	// TODO: could be expanded to include 'parent-page/sub-page' slugs?
-	register_rest_route( 'slug', '/(?P<slug>[a-zA-Z0-9_-]+)', array(
-		array(
-			'methods'  => WP_REST_Server::READABLE,
-			'callback' => 'my_theme_get_content_by_slug',
-		)
-	) );
+	add_action( 'rest_api_init', function () {
+		register_rest_route( 'slug', '/(?P<slug>[a-zA-Z0-9_-]+)', array(
+			array(
+				'methods'  => WP_REST_Server::READABLE,
+				'callback' => 'my_theme_get_content_by_slug',
+			)
+		) );
+	});
 
 	function my_theme_get_content_by_slug( WP_REST_Request $request ) {
+		// https://www.coditty.com/code/wordpress-rest-api-how-to-get-content-by-slug
 
 		$params = $request->get_params();
 		$slug = $params['slug'];
