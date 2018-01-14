@@ -78,4 +78,42 @@
 	remove_filter('the_content', 'wpautop');
 	remove_filter('the_excerpt', 'wpautop');
 
+	// register route to get page or post by slug
+	// TODO: could be expanded to include 'parent-page/sub-page' slugs?
+	register_rest_route( 'slug', '/(?P<slug>[a-zA-Z0-9_-]+)', array(
+		array(
+			'methods'  => WP_REST_Server::READABLE,
+			'callback' => 'my_theme_get_content_by_slug',
+		)
+	) );
+
+	function my_theme_get_content_by_slug( WP_REST_Request $request ) {
+
+		$params = $request->get_params();
+		$slug = $params['slug'];
+
+		// if the slug is a post
+		$post_or_page = 'post';
+		$id = get_page_by_path( $slug, ARRAY_A, $post_or_page)['ID'];
+		
+		if ( ! $id ) {
+			// if its not a post it might be a page
+			$post_or_page = 'page';
+			$id = get_page_by_path( $slug, ARRAY_A, $post_or_page)['ID'];
+		}
+
+		if ( ! $id ) {
+			// still returned nothing
+			$id = 99999;
+		}
+
+		$request['id'] = $id;
+		$rest_controller = new WP_REST_Posts_Controller( $post_or_page );
+		
+		$response = $rest_controller->get_item( $request );
+
+		return $response;
+	
+	}
+
 ?>
