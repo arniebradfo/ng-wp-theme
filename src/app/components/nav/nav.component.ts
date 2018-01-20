@@ -20,15 +20,15 @@ export class NavComponent implements OnInit {
   ) { }
 
   private getMenus() {
-    // this.wpRestService
-    //   .getMenu(this.name)
-    //   .subscribe(res => {
-    //     this.menu = res;
-    //     // console.log(this.menu);
-    //   }, err => {
-    //     this.error = err;
-    //     // console.log(this.error);
-    //   });
+    this.wpRestService
+      .getMenu(this.name)
+      .subscribe(res => {
+        this.menu = res;
+        // console.log(this.menu);
+      }, err => {
+        this.error = err;
+        // console.log(this.error);
+      });
   }
 
   ngOnInit() {

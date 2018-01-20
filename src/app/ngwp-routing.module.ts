@@ -15,19 +15,24 @@ const routes: Routes = [
   }
 ];
 
-// /{post}/
+
+// ROUTES TO POST/PAGE
+// /{post-page-slug}/
 // /{post}/{page-number}/
 // /{post}/comment-page-{number}/#comments
 
-// /category|tag|author/{category|tag|author}/
-// /category|tag|author/{category|tag|author}/page/{page-number}/
-
+// ROUTES TO LIST
+// /
+// /page/{page-number}/
+// /category|tag|author/{category-slug|tag-slug|author-slug}/
+// /category|tag|author/{category-slug|tag-slug|author-slug}/page/{page-number}/
 // /?s={search-term}
 // /page/{page-number}/?s={search-term}
 
-// /wp-admin/* reroutes to backend
+// BACKEND //
+// /wp-admin/*
 
-// password protected stuff
+// password protected stuff ??
 
 
 @NgModule({

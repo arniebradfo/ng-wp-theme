@@ -22,17 +22,11 @@ export class PostListComponent implements OnInit {
   private getPosts() {
     this.wpRestService.posts
       .then(posts => {
-        console.log(posts);
+        // console.log(posts);
         this.posts = posts;
       }, err => {
         this.error = err;
       });
-    // .subscribe(res => {
-    //   this.posts = res;
-    //   // console.log(res);
-    // }, err => {
-    //   this.error = err;
-    // });
   }
 
   ngOnInit() {

@@ -7,7 +7,6 @@ import 'rxjs/add/operator/catch';
 
 import { environment } from '../../environments/environment';
 import { IMenuItem, IPost } from '../interfaces/wp-rest-types';
-import { Promise } from 'q';
 
 @Injectable()
 export class WpRestService {
@@ -18,10 +17,10 @@ export class WpRestService {
   private _wpSlug: string = this._wpDomain + 'wp-json/slug/';
 
   public posts: Promise<IPost[]>;
-  public pages: Promise<IPost[]>;
-  public tags: Promise<any[]>;
-  public categories: Promise<any[]>;
-  public settings: Promise<{}>;
+  public pages: Promise<IPost[]>; // TODO: make IPage, same as IPost?
+  public tags: Promise<any[]>; // TODO: make ITag
+  public categories: Promise<any[]>; // TODO: make ICategory
+  public slugMap: Promise<any>; // TODO: make ISlugMap
 
   constructor(
     private http: Http,
@@ -31,7 +30,6 @@ export class WpRestService {
     this.refreshPages();
     this.refreshTags();
     this.refreshCategories();
-    this.refreshSettings();
   }
 
   public refreshPosts(): void {
@@ -41,38 +39,15 @@ export class WpRestService {
     this.pages = this.requestType('pages');
   }
   public refreshTags(): void {
-    this.pages = this.requestType('tags');
+    this.tags = this.requestType('tags');
   }
   public refreshCategories(): void {
-    this.pages = this.requestType('categories');
-  }
-
-  public refreshSettings(): void {
-    // this._settings = [];
-    let store = [];
-    this.settings = Promise((resolve, reject) => {
-      const requestPostSet = () => {
-        this.http
-          .get(this._wpRest + `settings`)
-          .map((res: Response) => res.json())
-          .catch((err: Response | any) => {
-            console.error(err);
-            reject(err);
-            return Observable.throw(err);
-          })
-          .subscribe((res: any[]) => {
-            store = res;
-            console.log(store);
-            resolve(store);
-          });
-      };
-      requestPostSet();
-    });
+    this.categories = this.requestType('categories');
   }
 
   public requestType(type): Promise<any> {
     let store = [];
-    return Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       let page = 1;
       const perPage = 100; // the max
       const requestPostSet = () => {
@@ -90,7 +65,7 @@ export class WpRestService {
               page++;
               requestPostSet();
             } else {
-              console.log(store);
+              // console.log(type, store);
               resolve(store);
             }
           });
@@ -99,14 +74,13 @@ export class WpRestService {
     });
   }
 
-  public getPost(slug: string): Observable<IPost> {
-    return this.http
-      .get(this._wpSlug + slug)
-      .map((res: Response) => res.json())
-      .catch((err: Response | any) => {
-        console.error(err);
-        return Observable.throw(err);
-      });
+  public getPostOrPage(slug: string): Promise<IPost|false> {
+    return Promise.all([this.posts, this.pages]).then(res => {
+      for (let i = 0; i < res.length; i++)
+        for (let j = 0; j < res[i].length; j++)
+          if (slug === res[i][j].slug) return res[i][j];
+      return false;
+    });
   }
 
   private checkForMenuApiErr(err: Response | any): string | any {
