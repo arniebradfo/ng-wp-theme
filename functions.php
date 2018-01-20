@@ -78,6 +78,7 @@
 	remove_filter('the_content', 'wpautop');
 	remove_filter('the_excerpt', 'wpautop');
 
+	
 	// register route to get page or post by slug
 	// TODO: could be expanded to include 'parent-page/sub-page' slugs?
 	add_action( 'rest_api_init', function () {
@@ -118,5 +119,8 @@
 		return $response;
 	
 	}
+
+
+
 
 ?>

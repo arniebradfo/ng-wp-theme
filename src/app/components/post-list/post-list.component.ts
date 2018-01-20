@@ -14,17 +14,25 @@ export class PostListComponent implements OnInit {
   posts: IPost[];
   error: string;
 
-  constructor( private wpRestService: WpRestService, private router: Router ) { }
+  constructor(
+    private wpRestService: WpRestService,
+    private router: Router
+  ) { }
 
   private getPosts() {
-    this.wpRestService
-      .getPosts()
-      .subscribe(res => {
-        this.posts = res;
-        // console.log(res);
+    this.wpRestService.posts
+      .then(posts => {
+        console.log(posts);
+        this.posts = posts;
       }, err => {
         this.error = err;
       });
+    // .subscribe(res => {
+    //   this.posts = res;
+    //   // console.log(res);
+    // }, err => {
+    //   this.error = err;
+    // });
   }
 
   ngOnInit() {
