@@ -10,9 +10,21 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
+    path: 'page/:pageNumber',
+    component: PostListComponent,
+  },
+  {
     path: ':slug',
     component: PostComponent
-  }
+  },
+  {
+    path: ':slug/page/:pageNumber',
+    component: PostComponent
+  },
+  {
+    path: ':type/:slug',
+    component: PostListComponent
+  },
 ];
 
 

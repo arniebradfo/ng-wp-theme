@@ -40,7 +40,7 @@ export class PostComponent implements OnInit, OnDestroy {
 
   constructor(
     private wpRestService: WpRestService,
-    private route: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
     private domSanitizer: DomSanitizer,
     private componentFactoryResolver: ComponentFactoryResolver,
     private renderer: Renderer2,
@@ -103,12 +103,10 @@ export class PostComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log(this);
-    this.route.params.forEach((params: Params) => {
+    this.activatedRoute.params.forEach((params: Params) => {
       const slug = params['slug'];
       this.getPost(slug);
     });
-
   }
 
   ngOnDestroy() {

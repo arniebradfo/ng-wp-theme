@@ -17,7 +17,7 @@ export class WpRestService {
   private _wpSlug: string = this._wpDomain + 'wp-json/slug/';
 
   public posts: Promise<IPost[]>;
-  public pages: Promise<IPost[]>; // TODO: make IPage, same as IPost?
+  public pages: Promise<any[]>; // TODO: make IPage, same as IPost?
   public tags: Promise<any[]>; // TODO: make ITag
   public categories: Promise<any[]>; // TODO: make ICategory
   public slugMap: Promise<any>; // TODO: make ISlugMap
@@ -65,7 +65,7 @@ export class WpRestService {
               page++;
               requestPostSet();
             } else {
-              // console.log(type, store);
+              console.log(type, store);
               resolve(store);
             }
           });
@@ -81,6 +81,36 @@ export class WpRestService {
           if (slug === res[i][j].slug) return res[i][j];
       return false;
     });
+  }
+
+  public getPosts(type?: 'tag'|'category'|'author', slug?: string): Promise<IPost[]> {
+
+    if (type == undefined || slug == undefined) return this.posts;
+
+    let pluralType: string;
+    switch (type) {
+      case 'tag':
+        pluralType = 'tags';
+        break;
+      case 'category':
+        pluralType = 'categories';
+        break;
+    }
+    const set: Promise<any[]> = this[pluralType];
+
+    return Promise.all([this.posts, set])
+      .then(res => {
+        const posts = res[0];
+        const items: any[] = res[1];
+        const matchingItem = items.find(item => {
+          return item.slug === slug;
+        });
+        const itemId: number = matchingItem.id;
+        return posts.filter(post => {
+          return post[pluralType].includes(itemId);
+        });
+      });
+
   }
 
   private checkForMenuApiErr(err: Response | any): string | any {
