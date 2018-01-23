@@ -20,7 +20,7 @@ export class WpRestService {
   public pages: Promise<any[]>; // TODO: make IPage, same as IPost?
   public tags: Promise<any[]>; // TODO: make ITag
   public categories: Promise<any[]>; // TODO: make ICategory
-  public slugMap: Promise<any>; // TODO: make ISlugMap
+  public users: Promise<any[]>; // TODO: make IAuthor
 
   constructor(
     private http: Http,
@@ -30,6 +30,7 @@ export class WpRestService {
     this.refreshPages();
     this.refreshTags();
     this.refreshCategories();
+    this.refreshUsers();
   }
 
   public refreshPosts(): void {
@@ -43,6 +44,9 @@ export class WpRestService {
   }
   public refreshCategories(): void {
     this.categories = this.requestType('categories');
+  }
+  public refreshUsers(): void {
+    this.users = this.requestType('users');
   }
 
   public requestType(type): Promise<any> {
@@ -87,16 +91,22 @@ export class WpRestService {
 
     if (type == undefined || slug == undefined) return this.posts;
 
-    let pluralType: string;
+    let prop: string;
+    let set: Promise<any[]>;
     switch (type) {
       case 'tag':
-        pluralType = 'tags';
+        prop = 'tags';
+        set = this.tags;
         break;
       case 'category':
-        pluralType = 'categories';
+        prop = 'categories';
+        set = this.categories;
+        break;
+      case 'author':
+        prop = 'author';
+        set = this.users;
         break;
     }
-    const set: Promise<any[]> = this[pluralType];
 
     return Promise.all([this.posts, set])
       .then(res => {
@@ -107,7 +117,10 @@ export class WpRestService {
         });
         const itemId: number = matchingItem.id;
         return posts.filter(post => {
-          return post[pluralType].includes(itemId);
+          if (type === 'author')
+            return post.author === itemId;
+          else
+            return post[prop].includes(itemId);
         });
       });
 
