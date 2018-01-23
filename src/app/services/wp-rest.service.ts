@@ -78,7 +78,7 @@ export class WpRestService {
     });
   }
 
-  public getPostOrPage(slug: string): Promise<IPost|false> {
+  public getPostOrPage(slug: string): Promise<IPost | false> {
     return Promise.all([this.posts, this.pages]).then(res => {
       for (let i = 0; i < res.length; i++)
         for (let j = 0; j < res[i].length; j++)
@@ -87,7 +87,7 @@ export class WpRestService {
     });
   }
 
-  public getPosts(type?: 'tag'|'category'|'author', slug?: string): Promise<IPost[]> {
+  public getPosts(type?: 'tag'|'category'|'author'|'search', slug?: string): Promise<IPost[]> {
 
     if (type == undefined || slug == undefined) return this.posts;
 
@@ -106,6 +106,20 @@ export class WpRestService {
         prop = 'author';
         set = this.users;
         break;
+      case 'search':
+        return Promise.all([this.posts, this.pages])
+          .then(res => {
+            let posts = res[0];
+            let pages = res[1];
+            const searchTerm = new RegExp(slug, 'i');
+            posts = posts.filter(post => {
+              return searchTerm.test(post.content.rendered) || searchTerm.test(post.title.rendered);
+            });
+            pages = pages.filter(page => {
+              return searchTerm.test(page.content.rendered) || searchTerm.test(page.title.rendered);
+            });
+            return posts.concat(pages);
+          });
     }
 
     return Promise.all([this.posts, set])

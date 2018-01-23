@@ -30,7 +30,7 @@ export interface IPost {
     author: 1;
     categories: number[];
     comment_status: 'open' | 'closed' ; // TODO: add the rest
-    IContent: IProtectedContent;
+    content: IProtectedContent;
     date: string; // Date?
     date_gmt: string; // Date?
     excerpt: IProtectedContent;

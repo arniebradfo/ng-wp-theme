@@ -22,20 +22,24 @@ export class PostListComponent implements OnInit {
   private getPosts() {
 
   }
-  
+
   ngOnInit() {
     this.activatedRoute.params.forEach((params: Params) => {
-      const type: 'tag'|'category'|undefined = params['type'];
-      const slug: string|undefined = params['slug'];
-      console.log(type, slug);
-
-      this.wpRestService.getPosts(type, slug)
-        .then(posts => {
-          // console.log(posts);
-          this.posts = posts;
-        }, err => {
-          this.error = err;
-        });
+      let type: 'tag'|'category'|'author'|'search'|undefined = params['type'];
+      let slug: string|undefined = params['slug'];
+      this.activatedRoute.queryParams.forEach((queryParams: Params) => {
+        if (queryParams.s != undefined) {
+          type = 'search';
+          slug = queryParams.s;
+        }
+        this.wpRestService.getPosts(type, slug)
+          .then(posts => {
+            // console.log(posts);
+            this.posts = posts;
+          }, err => {
+            this.error = err;
+          });
+      });
     });
 
   }
