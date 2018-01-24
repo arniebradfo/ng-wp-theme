@@ -1,13 +1,5 @@
 // TODO: this should be in a typings.d.ts file?
 
-export interface IContent {
-    rendered: string;
-}
-
-export interface IProtectedContent extends IContent {
-    protected: boolean;
-}
-
 export interface IMenuItem {
     ID: number;
     attr: string;
@@ -25,7 +17,6 @@ export interface IMenuItem {
     url: string;
     xfn: string;
 }
-
 
 export interface IPage {
     author: number;
@@ -121,6 +112,14 @@ export interface IUser {
         collection: ILinkHref[];
         self: ILinkHref[];
     };
+}
+
+interface IContent {
+    rendered: string;
+}
+
+interface IProtectedContent extends IContent {
+    protected: boolean;
 }
 
 interface ILinkHref {
