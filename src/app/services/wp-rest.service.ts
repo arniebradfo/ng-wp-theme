@@ -6,7 +6,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 
 import { environment } from '../../environments/environment';
-import { IMenuItem, IPost } from '../interfaces/wp-rest-types';
+import { IMenuItem, IPost, IPage, ITaxonomy, IUser } from '../interfaces/wp-rest-types';
 
 @Injectable()
 export class WpRestService {
@@ -17,10 +17,10 @@ export class WpRestService {
   private _wpSlug: string = this._wpDomain + 'wp-json/slug/';
 
   public posts: Promise<IPost[]>;
-  public pages: Promise<any[]>; // TODO: make IPage, same as IPost?
-  public tags: Promise<any[]>; // TODO: make ITag
-  public categories: Promise<any[]>; // TODO: make ICategory
-  public users: Promise<any[]>; // TODO: make IAuthor
+  public pages: Promise<IPage[]>;
+  public tags: Promise<ITaxonomy[]>;
+  public categories: Promise<ITaxonomy[]>;
+  public users: Promise<IUser[]>;
 
   constructor(
     private http: Http,
@@ -78,7 +78,7 @@ export class WpRestService {
     });
   }
 
-  public getPostOrPage(slug: string): Promise<IPost | false> {
+  public getPostOrPage(slug: string): Promise<IPage | false> {
     return Promise.all([this.posts, this.pages]).then(res => {
       for (let i = 0; i < res.length; i++)
         for (let j = 0; j < res[i].length; j++)
@@ -87,12 +87,12 @@ export class WpRestService {
     });
   }
 
-  public getPosts(type?: 'tag'|'category'|'author'|'search', slug?: string): Promise<IPost[]> {
+  public getPosts(type?: 'tag'|'category'|'author'|'search', slug?: string): Promise<(IPage|IPost)[]> {
 
-    if (type == undefined || slug == undefined) return this.posts;
+    if (type == null || slug == null) return this.posts;
 
     let prop: string;
-    let set: Promise<any[]>;
+    let set: Promise<(IUser|ITaxonomy)[]>;
     switch (type) {
       case 'tag':
         prop = 'tags';
@@ -118,7 +118,7 @@ export class WpRestService {
             pages = pages.filter(page => {
               return searchTerm.test(page.content.rendered) || searchTerm.test(page.title.rendered);
             });
-            return posts.concat(pages);
+            return posts.concat(<IPost[]>pages);
           });
     }
 

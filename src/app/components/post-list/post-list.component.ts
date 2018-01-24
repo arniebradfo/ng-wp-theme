@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IPost } from '../../interfaces/wp-rest-types';
+import { IPost, IPage } from '../../interfaces/wp-rest-types';
 import { WpRestService } from '../../services/wp-rest.service';
 import { ActivatedRoute, Params } from '@angular/router';
 
@@ -11,7 +11,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 })
 export class PostListComponent implements OnInit {
 
-  posts: IPost[];
+  posts: (IPost|IPage)[];
   error: string;
 
   constructor(
@@ -28,7 +28,7 @@ export class PostListComponent implements OnInit {
       let type: 'tag'|'category'|'author'|'search'|undefined = params['type'];
       let slug: string|undefined = params['slug'];
       this.activatedRoute.queryParams.forEach((queryParams: Params) => {
-        if (queryParams.s != undefined) {
+        if (queryParams.s != null) {
           type = 'search';
           slug = queryParams.s;
         }
