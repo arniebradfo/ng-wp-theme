@@ -4,9 +4,11 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/toPromise';
+
 
 import { environment } from '../../environments/environment';
-import { IWpMenuItem, IWpPost, IWpPage, IWpTaxonomy, IWpUser } from '../interfaces/wp-rest-types';
+import { IWpMenuItem, IWpPost, IWpPage, IWpTaxonomy, IWpUser, IWpComment } from '../interfaces/wp-rest-types';
 
 @Injectable()
 export class WpRestService {
@@ -87,12 +89,12 @@ export class WpRestService {
     });
   }
 
-  public getPosts(type?: 'tag'|'category'|'author'|'search', slug?: string): Promise<(IWpPage|IWpPost)[]> {
+  public getPosts(type?: 'tag' | 'category' | 'author' | 'search', slug?: string): Promise<(IWpPage | IWpPost)[]> {
 
     if (type == null || slug == null) return this.posts;
 
     let prop: string;
-    let set: Promise<(IWpUser|IWpTaxonomy)[]>;
+    let set: Promise<(IWpUser | IWpTaxonomy)[]>;
     switch (type) {
       case 'tag':
         prop = 'tags';
@@ -160,6 +162,19 @@ export class WpRestService {
         console.error(err);
         return Observable.throw(this.checkForMenuApiErr(err));
       });
+  }
+
+  public getComments(post: IWpPage): Promise<IWpComment[]> {
+    console.log(post._links.replies[0].href)
+
+    return this.http
+      .get(post._links.replies[0].href + '&per_page=100')
+      .map((res: Response) => res.json())
+      .catch((err: Response | any) => {
+        console.error(err);
+        return Observable.throw(err);
+      })
+      .toPromise();
   }
 
 }

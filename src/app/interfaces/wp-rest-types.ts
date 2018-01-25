@@ -96,11 +96,7 @@ export interface IWpTaxonomy { // IWpCategory & IWpTag
 }
 
 export interface IWpUser {
-    avatar_urls: {
-        24: string;
-        48: string;
-        96: string;
-    };
+    avatar_urls: IWpAvatarUrls;
     description: string;
     id: number;
     link: string;
@@ -112,6 +108,40 @@ export interface IWpUser {
         collection: IWpLinkHref[];
         self: IWpLinkHref[];
     };
+}
+
+export interface IWpComment {
+    author: number;
+    author_avatar_urls: IWpAvatarUrls;
+    author_name: string;
+    author_url: string;
+    content: IWpContent;
+    date: string;
+    date_gmt: string;
+    id: number;
+    link: string;
+    meta: string[];
+    parent: number;
+    post: number;
+    status: 'approved' | 'pending';
+    type: 'comment';
+    _links: {
+        author: IWpLinkHrefEmbeddable[];
+        collection: IWpLinkHref[];
+        self: IWpLinkHref[];
+        up: {
+            embeddable: boolean;
+            href: string;
+            post_type: 'post' | 'page'
+        }[];
+    };
+    children?: IWpComment[];
+}
+
+interface IWpAvatarUrls {
+    24: string;
+    48: string;
+    96: string;
 }
 
 interface IWpContent {
