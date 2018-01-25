@@ -1,9 +1,26 @@
 <article>
+
   <h1 *ngIf="post">
     {{ post.title.rendered }}
   </h1>
+
   <div #content [innerHTML]="postContent"></div>
+
+  <ul id="comments">
+    <ng-template #recursiveList let-comments>
+      <li *ngFor="let comment of comments">
+        <h6>{{comment.author_name}} at {{comment.date}}</h6>
+        <p [innerHTML]="comment.content.rendered"></p>
+        <ul *ngIf="comment.children.length > 0">
+          <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: comment.children }"></ng-container>
+        </ul>
+      </li>
+    </ng-template>
+    <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: comments }"></ng-container>
+  </ul>
+
   <div *ngIf="!post">
     no post found
   </div>
+
 </article>

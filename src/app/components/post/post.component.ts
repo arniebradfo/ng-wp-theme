@@ -61,6 +61,7 @@ export class PostComponent implements OnInit, OnDestroy {
         this.wpRestService.getComments(this.post)
           .then(comments => {
             this.comments = this.generateCommentHeiarchy(comments);
+            console.log(this.comments);
           });
 
         window.setTimeout(() => { this.renderComponents(); }, 0);
