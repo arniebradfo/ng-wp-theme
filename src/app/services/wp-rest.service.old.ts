@@ -6,7 +6,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 
 import { environment } from '../../environments/environment';
-import { IMenuItem, IPost } from '../interfaces/wp-rest-types';
+import { IWpMenuItem, IWpPost } from '../interfaces/wp-rest-types';
 
 
 @Injectable()
@@ -22,7 +22,7 @@ export class WpRestService {
     private http: Http,
   ) { }
 
-  public getPosts(): Observable<IPost[]> {
+  public getPosts(): Observable<IWpPost[]> {
     return this.http
       .get(this._wpRest + 'posts')
       .map((res: Response) => res.json())
@@ -32,7 +32,7 @@ export class WpRestService {
       });
   }
 
-  public getPost(slug: string): Observable<IPost> {
+  public getPost(slug: string): Observable<IWpPost> {
     return this.http
       .get(this._wpSlug + slug)
       .map((res: Response) => res.json())
@@ -54,7 +54,7 @@ export class WpRestService {
       return err;
   }
 
-  public getMenu(name: string): Observable<IMenuItem[]> {
+  public getMenu(name: string): Observable<IWpMenuItem[]> {
     return this.http
       .get(this._wpMenus + `menu-locations/${name}`)
       .map((res: Response) => res.json())

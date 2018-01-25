@@ -1,9 +1,9 @@
 // TODO: this should be in a typings.d.ts file?
 
-export interface IMenuItem {
+export interface IWpMenuItem {
     ID: number;
     attr: string;
-    children: IMenuItem[];
+    children: IWpMenuItem[];
     classes: string;
     description: string;
     object: string;
@@ -18,15 +18,15 @@ export interface IMenuItem {
     xfn: string;
 }
 
-export interface IPage {
+export interface IWpPage {
     author: number;
     comment_status: 'open' | 'closed'; // TODO: add the rest
-    content: IProtectedContent;
+    content: IWpContentProtected;
     date: string;
     date_gmt: string;
-    excerpt: IProtectedContent;
+    excerpt: IWpContentProtected;
     featured_media: number;
-    guid: IContent;
+    guid: IWpContent;
     id: number;
     link: string;
     menu_order: number;
@@ -38,36 +38,36 @@ export interface IPage {
     slug: string;
     status: 'open' | 'closed' | 'publish'; // ??? TODO: add the rest
     template: string;
-    title: IContent;
+    title: IWpContent;
     type: 'post' | 'page'; // TODO: add the rest
     _links: {
-        about: ILinkHref[];
-        author: ILinkHrefEmbeddable[];
-        collection: ILinkHref[];
-        curies: ICurie[];
-        replies: ILinkHrefEmbeddable[];
-        self: ILinkHref[];
-        'version-history': ILinkHref[];
-        'wp:attachment': ILinkHref[];
+        about: IWpLinkHref[];
+        author: IWpLinkHrefEmbeddable[];
+        collection: IWpLinkHref[];
+        curies: IWpCurie[];
+        replies: IWpLinkHrefEmbeddable[];
+        self: IWpLinkHref[];
+        'version-history': IWpLinkHref[];
+        'wp:attachment': IWpLinkHref[];
     };
 }
 
-export interface IPost extends IPage {
+export interface IWpPost extends IWpPage {
     categories: number[];
     format: 'standard' | 'link' | 'video' | 'aside' | 'audio' | 'chat' | 'gallery' | 'image' | 'quote' | 'status';
-    ping_status: 'open' | 'closed'; // TODO: add the rest
+    parent: undefined; // to negate the parent in IPage?
     sticky: boolean;
     tags: number[];
     _links: {
-        about: ILinkHref[];
-        author: ILinkHrefEmbeddable[];
-        collection: ILinkHref[];
-        curies: ICurie[];
-        replies: ILinkHrefEmbeddable[];
-        self: ILinkHref[];
-        'version-history': ILinkHref[];
-        'wp:attachment': ILinkHref[];
-        'wp:featuredmedia': ILinkHrefEmbeddable[];
+        about: IWpLinkHref[];
+        author: IWpLinkHrefEmbeddable[];
+        collection: IWpLinkHref[];
+        curies: IWpCurie[];
+        replies: IWpLinkHrefEmbeddable[];
+        self: IWpLinkHref[];
+        'version-history': IWpLinkHref[];
+        'wp:attachment': IWpLinkHref[];
+        'wp:featuredmedia': IWpLinkHrefEmbeddable[];
         'wp:term': {
             embeddable: boolean;
             href: string;
@@ -76,7 +76,7 @@ export interface IPost extends IPage {
     };
 }
 
-export interface ITaxonomy { // ICategory & ITag
+export interface IWpTaxonomy { // IWpCategory & IWpTag
     count: number;
     description: string;
     id: number;
@@ -87,15 +87,15 @@ export interface ITaxonomy { // ICategory & ITag
     slug: string;
     taxonomy: 'category' | 'post_tag'; // ???
     _links: {
-        about: ILinkHref[];
-        collection: ILinkHref[];
-        curies: ICurie[];
-        self: ILinkHref[];
-        'wp:post_type': ILinkHref[];
+        about: IWpLinkHref[];
+        collection: IWpLinkHref[];
+        curies: IWpCurie[];
+        self: IWpLinkHref[];
+        'wp:post_type': IWpLinkHref[];
     };
 }
 
-export interface IUser {
+export interface IWpUser {
     avatar_urls: {
         24: string;
         48: string;
@@ -109,28 +109,28 @@ export interface IUser {
     slug: string;
     url: string;
     _links: {
-        collection: ILinkHref[];
-        self: ILinkHref[];
+        collection: IWpLinkHref[];
+        self: IWpLinkHref[];
     };
 }
 
-interface IContent {
+interface IWpContent {
     rendered: string;
 }
 
-interface IProtectedContent extends IContent {
+interface IWpContentProtected extends IWpContent {
     protected: boolean;
 }
 
-interface ILinkHref {
+interface IWpLinkHref {
     href: string;
 }
 
-interface ILinkHrefEmbeddable extends ILinkHref {
+interface IWpLinkHrefEmbeddable extends IWpLinkHref {
     embeddable: boolean;
 }
 
-interface ICurie {
+interface IWpCurie {
     href: string;
     name: string;
     templated: boolean;

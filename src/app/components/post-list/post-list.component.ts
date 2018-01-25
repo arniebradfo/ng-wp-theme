@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IPost, IPage } from '../../interfaces/wp-rest-types';
+import { IWpPost, IWpPage } from '../../interfaces/wp-rest-types';
 import { WpRestService } from '../../services/wp-rest.service';
 import { ActivatedRoute, Params } from '@angular/router';
 
@@ -11,7 +11,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 })
 export class PostListComponent implements OnInit {
 
-  posts: (IPost|IPage)[];
+  posts: (IWpPost|IWpPage)[];
   error: string;
 
   constructor(

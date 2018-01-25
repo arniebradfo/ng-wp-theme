@@ -6,7 +6,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 
 import { environment } from '../../environments/environment';
-import { IMenuItem, IPost, IPage, ITaxonomy, IUser } from '../interfaces/wp-rest-types';
+import { IWpMenuItem, IWpPost, IWpPage, IWpTaxonomy, IWpUser } from '../interfaces/wp-rest-types';
 
 @Injectable()
 export class WpRestService {
@@ -16,11 +16,11 @@ export class WpRestService {
   private _wpMenus: string = this._wpDomain + 'wp-json/wp-api-menus/v2/';
   private _wpSlug: string = this._wpDomain + 'wp-json/slug/';
 
-  public posts: Promise<IPost[]>;
-  public pages: Promise<IPage[]>;
-  public tags: Promise<ITaxonomy[]>;
-  public categories: Promise<ITaxonomy[]>;
-  public users: Promise<IUser[]>;
+  public posts: Promise<IWpPost[]>;
+  public pages: Promise<IWpPage[]>;
+  public tags: Promise<IWpTaxonomy[]>;
+  public categories: Promise<IWpTaxonomy[]>;
+  public users: Promise<IWpUser[]>;
 
   constructor(
     private http: Http,
@@ -78,7 +78,7 @@ export class WpRestService {
     });
   }
 
-  public getPostOrPage(slug: string): Promise<IPage | false> {
+  public getPostOrPage(slug: string): Promise<IWpPage | false> {
     return Promise.all([this.posts, this.pages]).then(res => {
       for (let i = 0; i < res.length; i++)
         for (let j = 0; j < res[i].length; j++)
@@ -87,12 +87,12 @@ export class WpRestService {
     });
   }
 
-  public getPosts(type?: 'tag'|'category'|'author'|'search', slug?: string): Promise<(IPage|IPost)[]> {
+  public getPosts(type?: 'tag'|'category'|'author'|'search', slug?: string): Promise<(IWpPage|IWpPost)[]> {
 
     if (type == null || slug == null) return this.posts;
 
     let prop: string;
-    let set: Promise<(IUser|ITaxonomy)[]>;
+    let set: Promise<(IWpUser|IWpTaxonomy)[]>;
     switch (type) {
       case 'tag':
         prop = 'tags';
@@ -118,7 +118,7 @@ export class WpRestService {
             pages = pages.filter(page => {
               return searchTerm.test(page.content.rendered) || searchTerm.test(page.title.rendered);
             });
-            return posts.concat(<IPost[]>pages);
+            return posts.concat(<IWpPost[]>pages);
           });
     }
 
@@ -152,7 +152,7 @@ export class WpRestService {
     return err;
   }
 
-  public getMenu(name: string): Observable<IMenuItem[]> {
+  public getMenu(name: string): Observable<IWpMenuItem[]> {
     return this.http
       .get(this._wpMenus + `menu-locations/${name}`)
       .map((res: Response) => res.json())
