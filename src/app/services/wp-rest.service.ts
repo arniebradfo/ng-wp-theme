@@ -38,7 +38,10 @@ export class WpRestService {
   }
 
   public refreshPosts(): void {
-    this.posts = this.requestType('posts');
+    this.posts = this.requestType('posts').then(posts => {
+      // TODO: reorder so sticky posts are at the top
+      return posts;
+    });
   }
   public refreshPages(): void {
     this.pages = this.requestType('pages');
