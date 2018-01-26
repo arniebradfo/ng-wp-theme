@@ -9,10 +9,11 @@ import { ActivatedRoute, Params } from '@angular/router';
 })
 export class PostListComponent implements OnInit {
 
-  posts: (IWpPost|IWpPage)[];
+  posts: (IWpPost | IWpPage)[];
   error: string;
   postsPerPage: number;
   pageNumber: number;
+  pageCount: number[];
 
   constructor(
     private wpRestService: WpRestService,
@@ -21,13 +22,13 @@ export class PostListComponent implements OnInit {
 
   ngOnInit() {
 
-    console.log(this.activatedRoute);
+    // console.log(this.activatedRoute);
 
     this.activatedRoute.params.forEach((params: Params) => {
 
       this.pageNumber = +params['pageNumber'] || 1;
-      let type: 'tag'|'category'|'author'|'search'|undefined = params['type'];
-      let slug: string|undefined = params['slug'];
+      let type: 'tag' | 'category' | 'author' | 'search' | undefined = params['type'];
+      let slug: string | undefined = params['slug'];
 
       this.activatedRoute.queryParams.forEach((queryParams: Params) => {
 
@@ -40,16 +41,22 @@ export class PostListComponent implements OnInit {
           this.wpRestService.getPosts(type, slug),
           this.wpRestService.options
         ]).then(res => {
-            const posts = res[0];
-            const options = res[1];
-            this.postsPerPage = options.reading.posts_per_page;
-            const lowerIndex = this.postsPerPage * (this.pageNumber - 1);
-            const upperIndex = this.postsPerPage * this.pageNumber;
-            this.posts = posts.slice(lowerIndex, upperIndex);
-          }, err => this.error = err );
+
+          const posts = res[0];
+          const options = res[1];
+          this.postsPerPage = options.reading.posts_per_page;
+          this.pageCount = Array(Math.ceil(posts.length / this.postsPerPage)).fill(0);
+          console.log(this.pageCount);
+          
+
+          const lowerIndex = this.postsPerPage * (this.pageNumber - 1);
+          const upperIndex = this.postsPerPage * this.pageNumber;
+          this.posts = posts.slice(lowerIndex, upperIndex);
+
+        }, err => this.error = err);
 
       });
-      
+
     });
 
   }
