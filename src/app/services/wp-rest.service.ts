@@ -165,7 +165,7 @@ export class WpRestService {
   }
 
   public getComments(post: IWpPage): Promise<IWpComment[]> {
-    console.log(post._links.replies[0].href)
+    console.log(post._links.replies[0].href);
 
     return this.http
       .get(post._links.replies[0].href + '&per_page=100')

@@ -138,6 +138,59 @@ export interface IWpComment {
     children?: IWpComment[];
 }
 
+export interface IWpOptions {
+    discussion: {
+        require_name_email: boolean;
+        thread_comments: boolean;
+        thread_comments_depth: number;
+        show_avatars: boolean;
+        avatar_default: 'mystery'|'blank'|'gravatar_default'|'identicon'|'wavatar'|'monsterid'|'retro';
+        page_comments: boolean;
+        comments_per_page: number;
+        default_comments_page: 'newest'|string;
+        comment_order: 'desc'|'asc';
+    };
+    general: {
+        admin_email: string;
+        blogdescription: string;
+        blogname: string;
+        comment_registration: boolean;
+        date_format: string;
+        home: string;
+        siteurl: string;
+        start_of_week: Week;
+        time_format: string;
+        users_can_register: boolean;
+    };
+    permalinks: {
+        permalink_structure: string;
+        category_base: string;
+        tag_base: string;
+    };
+    reading: {
+        page_on_front: number;
+        page_for_posts: number;
+        posts_per_page: number;
+        show_on_front: 'posts' | 'page';
+        sticky_posts: number[];
+    };
+    widgets: {
+        sidebars_widgets: {
+            wp_inactive_widgets: string[];
+            array_version: number;
+        };
+        widget_categories: {
+            [id: number]: {
+                title: string;
+                count: number;
+                hierarchical: number;
+                dropdown: number;
+            };
+            _multiwidget: number;
+        };
+    };
+}
+
 interface IWpAvatarUrls {
     24: string;
     48: string;
@@ -164,4 +217,14 @@ interface IWpCurie {
     href: string;
     name: string;
     templated: boolean;
+}
+
+export enum Week {
+    Sunday,
+    Monday,
+    Tuesday,
+    Wednesday,
+    Thursday,
+    Friday,
+    Saturday
 }

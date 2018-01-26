@@ -29,9 +29,10 @@ const routes: Routes = [
 
 
 // ROUTES TO POST/PAGE
-// /{post-page-slug}/
+// /{post-or-page-slug}/
 // /{post}/{page-number}/
 // /{post}/comment-page-{number}/#comments
+// /{page-slug}/{child-page-slug}/{grandchild-page-slug}/{ect...}
 
 // ROUTES TO LIST
 // /
@@ -45,6 +46,7 @@ const routes: Routes = [
 // /wp-admin/*
 
 // password protected stuff ??
+
 
 
 @NgModule({

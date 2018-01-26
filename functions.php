@@ -79,48 +79,64 @@
 	remove_filter('the_excerpt', 'wpautop');
 
 	
-	// register route to get page or post by slug
-	// TODO: could be expanded to include 'parent-page/sub-page' slugs?
+	// register route to get options needed for Angular
 	add_action( 'rest_api_init', function () {
-		register_rest_route( 'slug', '/(?P<slug>[a-zA-Z0-9_-]+)', array(
+		register_rest_route( 'ngwp/v2', '/options', array(
 			array(
 				'methods'  => WP_REST_Server::READABLE,
-				'callback' => 'my_theme_get_content_by_slug',
+				'callback' => 'ngwp_get_wp_options',
 			)
 		) );
 	});
 
-	function my_theme_get_content_by_slug( WP_REST_Request $request ) {
-		// https://www.coditty.com/code/wordpress-rest-api-how-to-get-content-by-slug
+	function ngwp_get_wp_options( WP_REST_Request $request ) {
 
-		$params = $request->get_params();
-		$slug = $params['slug'];
-
-		// if the slug is a post
-		$post_or_page = 'post';
-		$id = get_page_by_path( $slug, ARRAY_A, $post_or_page)['ID'];
-		
-		if ( ! $id ) {
-			// if its not a post it might be a page
-			$post_or_page = 'page';
-			$id = get_page_by_path( $slug, ARRAY_A, $post_or_page)['ID'];
-		}
-
-		if ( ! $id ) {
-			// still returned nothing
-			$id = 99999;
-		}
-
-		$request['id'] = $id;
-		$rest_controller = new WP_REST_Posts_Controller( $post_or_page );
-		
-		$response = $rest_controller->get_item( $request );
-
-		return $response;
-	
+		// WP SETTINGS OPTIONS //
+		// @link: https://codex.wordpress.org/Option_Reference
+		return new WP_REST_Response(array(
+			'discussion' => array(
+				'require_name_email' => boolval(get_option('require_name_email')),
+				'thread_comments' => boolval(get_option('thread_comments')),
+				'thread_comments_depth' => intval(get_option('thread_comments_depth')),
+				'show_avatars' => boolval(get_option('show_avatars')),
+				'avatar_default' => get_option('avatar_default'),
+				'page_comments' => boolval(get_option('page_comments')),
+				'comments_per_page' => intval(get_option('comments_per_page')),
+				'default_comments_page' => get_option('default_comments_page'),
+				'comment_order' => get_option('comment_order'),
+			),
+			'general' => array(
+				'admin_email' => get_option('admin_email'),
+				'blogdescription' => get_option('blogdescription'),
+				'blogname' => get_option('blogname'),
+				'comment_registration' => boolval(get_option('comment_registration')),
+				'date_format' => get_option('date_format'),
+				'home' => get_option('home'),
+				'siteurl' => get_option('siteurl'),
+				'start_of_week' => intval(get_option('start_of_week')),
+				'time_format' => get_option('time_format'),
+				'users_can_register' => boolval(get_option('users_can_register')),
+			),
+			'permalinks' => array(
+				'permalink_structure' => get_option('permalink_structure'),
+				'category_base' => get_option('category_base'),
+				'tag_base' => get_option('tag_base'),
+			),
+			'reading' => array(
+				'page_on_front' => intval(get_option('page_on_front')),
+				'page_for_posts' => intval(get_option('page_for_posts')),
+				'posts_per_page' => intval(get_option('posts_per_page')),
+				'show_on_front' => get_option('show_on_front'),
+				'sticky_posts' => get_option('sticky_posts'),
+			),
+			'widgets' => array(
+				'sidebars_widgets' => get_option('sidebars_widgets'),
+				'widget_categories' => get_option('widget_categories'),
+				// not sure what these are for...
+				// 'widget_text' => get_option('widget_text'),
+				// 'widget_rss' => get_option('widget_rss'),
+			),
+		));
 	}
-
-
-
 
 ?>
