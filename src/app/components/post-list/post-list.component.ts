@@ -6,8 +6,6 @@ import { ActivatedRoute, Params } from '@angular/router';
 @Component({
   selector: 'ngwp-post-list',
   templateUrl: './post-list.component.html',
-  styleUrls: ['./post-list.component.css'],
-  // providers: [WpRestService]
 })
 export class PostListComponent implements OnInit {
 
@@ -18,10 +16,6 @@ export class PostListComponent implements OnInit {
     private wpRestService: WpRestService,
     private activatedRoute: ActivatedRoute
   ) { }
-
-  private getPosts() {
-
-  }
 
   ngOnInit() {
     this.activatedRoute.params.forEach((params: Params) => {

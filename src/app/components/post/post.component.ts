@@ -24,8 +24,6 @@ import { COMPONENTREGISTRY } from 'app/app-component-registry';
 @Component({
   selector: 'ngwp-post',
   templateUrl: './post.component.html',
-  styleUrls: ['./post.component.css'],
-  // providers: [WpRestService]
 })
 export class PostComponent implements OnInit, OnDestroy {
 

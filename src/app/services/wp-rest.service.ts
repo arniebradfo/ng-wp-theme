@@ -8,7 +8,7 @@ import 'rxjs/add/operator/toPromise';
 
 
 import { environment } from '../../environments/environment';
-import { IWpMenuItem, IWpPost, IWpPage, IWpTaxonomy, IWpUser, IWpComment } from '../interfaces/wp-rest-types';
+import { IWpMenuItem, IWpPost, IWpPage, IWpTaxonomy, IWpUser, IWpComment, IWpOptions } from '../interfaces/wp-rest-types';
 
 @Injectable()
 export class WpRestService {
@@ -16,18 +16,20 @@ export class WpRestService {
   private _wpDomain: string = environment.wpBase;
   private _wpRest: string = this._wpDomain + 'wp-json/wp/v2/';
   private _wpMenus: string = this._wpDomain + 'wp-json/wp-api-menus/v2/';
-  private _wpSlug: string = this._wpDomain + 'wp-json/slug/';
+  private _ngWp: string = this._wpDomain + 'wp-json/ngwp/v2/';
 
   public posts: Promise<IWpPost[]>;
   public pages: Promise<IWpPage[]>;
   public tags: Promise<IWpTaxonomy[]>;
   public categories: Promise<IWpTaxonomy[]>;
   public users: Promise<IWpUser[]>;
+  public options: Promise<IWpOptions>;
 
   constructor(
     private http: Http,
   ) {
     // generate all properties.
+    this.refreshOptions();
     this.refreshPosts();
     this.refreshPages();
     this.refreshTags();
@@ -164,8 +166,22 @@ export class WpRestService {
       });
   }
 
+  public refreshOptions(): void {
+    this.options = this.http
+      .get(this._ngWp + `options`)
+      .map((res: Response) => res.json())
+      .catch((err: Response | any) => {
+        console.error(err);
+        return Observable.throw(err);
+      })
+      .toPromise();
+      
+    this.options.then(options => console.log('options', options));
+   }
+
   public getComments(post: IWpPage): Promise<IWpComment[]> {
-    console.log(post._links.replies[0].href);
+    // maybe save the comments somehow?
+    // console.log(post._links.replies[0].href);
 
     return this.http
       .get(post._links.replies[0].href + '&per_page=100')
