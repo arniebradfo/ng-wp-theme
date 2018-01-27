@@ -6,16 +6,19 @@
     {{ post.title.rendered }}
   </li>
 </ul>
+
+<span>Pagination</span>
 <nav>
   <ul>
     <li 
     *ngFor="let count of pageCount; let i = index" 
-    [routerLink]="'/page/' + (i+1)"
+    [routerLink]="routerPrefix + '/page/' + (i+1)"
     >
     {{i+1}}
     </li>
   </ul>
 </nav>
+
 <div *ngIf="error">
   Error: {{error}}
 </div>

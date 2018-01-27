@@ -25,6 +25,10 @@ const routes: Routes = [
     path: ':type/:slug',
     component: PostListComponent
   },
+  {
+    path: ':type/:slug/page/:pageNumber',
+    component: PostListComponent
+  },
 ];
 
 
