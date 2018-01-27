@@ -52,7 +52,6 @@ export class PostListComponent implements OnInit {
           const options = res[1];
           this.postsPerPage = options.reading.posts_per_page;
           this.pageCount = Array(Math.ceil(posts.length / this.postsPerPage)).fill(0);
-          // console.log(this.pageCount);
 
           const lowerIndex = this.postsPerPage * (this.pageNumber - 1);
           const upperIndex = this.postsPerPage * this.pageNumber;

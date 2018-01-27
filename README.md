@@ -1,6 +1,8 @@
 # NG-WP
 
-A minimal WordPress theme that runs off of an Angular 4 app. Built for the tutorial http://doppiaeast.com/article/angular-2-wordpress-theme-setup/.
+A minimal WordPress theme that runs off of an Angular 4 app. 
+
+Originally built for the tutorial http://doppiaeast.com/article/angular-2-wordpress-theme-setup/.
 
 ## Usage
 
@@ -17,3 +19,33 @@ This project will play nice with the Angular CLI.
 ## Contributions
 
 Pull requests always welcome
+
+## TODOs:
+- more buttons and feauters on the post-list
+- next/previous post
+- comment submission
+- shortcodes
+- widgets
+
+### TODOs: less important
+- put stickey posts first
+- child page routing
+
+### Routing:
+- ROUTES TO POST/PAGE
+    - `/{post-or-page-slug}/` 👍
+    - `/{post}/{page-number}/` 👍
+    - `/{post}/comment-page-{number}/#comments`
+    - `/{page-slug}/{child-page-slug}/{grandchild-page-slug}/{ect...}`
+- ROUTES TO LIST
+    - `/` 👍
+    - `/page/{page-number}/` 👍
+    - `/category|tag|author/{category-slug|tag-slug|author-slug}/` 👍
+    - `/category|tag|author/{category-slug|tag-slug|author-slug}/page/{page-number}/` 👍
+    - `/?s={search-term}` 👍
+    - `/page/{page-number}/?s={search-term}` 👍
+- BACKEND
+    - `/wp-admin/*` 👍
+- password protected stuff ??
+- change tag and category base
+- change permalink file
