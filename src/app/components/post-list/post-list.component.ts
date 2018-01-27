@@ -15,6 +15,7 @@ export class PostListComponent implements OnInit {
   pageNumber: number;
   pageCount: number[];
   routerPrefix: string = '';
+  queryParams: { [key: string]: string; } = {};
 
   constructor(
     private wpRestService: WpRestService,
@@ -35,6 +36,8 @@ export class PostListComponent implements OnInit {
 
       this.activatedRoute.queryParams.forEach((queryParams: Params) => {
 
+        this.queryParams = queryParams;
+
         if (queryParams.s != null) {
           type = 'search';
           slug = queryParams.s;
@@ -49,7 +52,7 @@ export class PostListComponent implements OnInit {
           const options = res[1];
           this.postsPerPage = options.reading.posts_per_page;
           this.pageCount = Array(Math.ceil(posts.length / this.postsPerPage)).fill(0);
-          console.log(this.pageCount);
+          // console.log(this.pageCount);
 
           const lowerIndex = this.postsPerPage * (this.pageNumber - 1);
           const upperIndex = this.postsPerPage * this.pageNumber;
