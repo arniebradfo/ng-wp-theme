@@ -8,6 +8,9 @@
       <a [routerLink]="'/author/' + post.author_ref.slug" >
         {{ post.author_ref.name }}
       </a>
+      <span>
+        {{ post.date | date: 'MMM d, y, h:mm a' }}
+      </span>
     </p>
     <p><small>
       {{ post.excerpt.rendered }}

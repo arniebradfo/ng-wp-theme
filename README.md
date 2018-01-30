@@ -30,6 +30,8 @@ Pull requests always welcome
 ### TODOs: less important
 - put stickey posts first
 - child page routing
+- use date and time formatting from options obj:
+    - map [Anuglar date pipe](https://angular.io/api/common/DatePipe) to [php date formatting](https://codex.wordpress.org/Formatting_Date_and_Time)
 
 ### Routing:
 - ROUTES TO POST/PAGE
