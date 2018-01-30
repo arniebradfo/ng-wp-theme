@@ -48,15 +48,11 @@ export class PostListComponent implements OnInit {
 
         Promise.all([
           this.wpRestService.getPosts(type, slug),
-          this.wpRestService.options,
-          this.wpRestService.categoriesById,
-          this.wpRestService.tagsById
+          this.wpRestService.options
         ]).then(res => {
 
           const posts = res[0];
           const options = res[1];
-          this.categoriesById = res[2];
-          this.tagsById = res[3];
 
           this.postsPerPage = options.reading.posts_per_page;
           this.pageCount = Array(Math.ceil(posts.length / this.postsPerPage)).fill(0);

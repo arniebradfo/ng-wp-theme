@@ -19,19 +19,19 @@ export class WpRestService {
   private _ngWp: string = this._wpDomain + 'wp-json/ngwp/v2/';
 
   public posts: Promise<IWpPost[]>;
-  public postsById: Promise<(IWpPost|undefined)[]>;
+  private _postsById: Promise<IWpPost[]>;
 
   public pages: Promise<IWpPage[]>;
-  public pagesById: Promise<(IWpPage|undefined)[]>;
+  private _pagesById: Promise<IWpPage[]>;
 
   public tags: Promise<IWpTaxonomy[]>;
-  public tagsById: Promise<(IWpTaxonomy|undefined)[]>;
+  private _tagsById: Promise<IWpTaxonomy[]>;
 
   public categories: Promise<IWpTaxonomy[]>;
-  public categoriesById: Promise<(IWpTaxonomy|undefined)[]>;
+  private _categoriesById: Promise<IWpTaxonomy[]>;
 
   public users: Promise<IWpUser[]>;
-  public usersById: Promise<(IWpUser|undefined)[]>;
+  private _usersById: Promise<IWpUser[]>;
 
   public options: Promise<IWpOptions>;
 
@@ -40,44 +40,68 @@ export class WpRestService {
   ) {
     // generate all properties.
     this.refreshOptions();
-    this.refreshPosts();
-    this.refreshPages();
     this.refreshTags();
     this.refreshCategories();
     this.refreshUsers();
+
+    this.refreshPosts();
+    this.refreshPages();
   }
 
   public refreshPosts(): void {
-    this.posts = this.requestType('posts').then(posts => {
+    this.posts = this.requestType('posts');
+    this.posts = Promise.all([this.posts, this._tagsById, this._categoriesById, this._usersById]).then(res => {
       // TODO: reorder so sticky posts are at the top
+      const posts = res[0];
+      const tagsById = res[1];
+      const categoriesById = res[2];
+      const usersById = res[3];
+      posts.forEach(post => {
+        post.tags_ref = [];
+        post.categories_ref = [];
+        post.tags.forEach(tagId => post.tags_ref.push(tagsById[tagId]) );
+        post.categories.forEach(categoryId => post.categories_ref.push(categoriesById[categoryId]) );
+        post.author_ref = usersById[post.author];
+        post = this.tryConvertingDates(post);
+      });
       return posts;
     });
-    this.postsById = <Promise<(IWpPost|undefined)[]>>this.orderById(this.posts);
+    this._postsById = <Promise<IWpPost[]>>this.orderById(this.posts);
   }
   public refreshPages(): void {
     this.pages = this.requestType('pages');
-    this.pagesById = <Promise<(IWpPage|undefined)[]>>this.orderById(this.pages);
+    this.pages = Promise.all([this.pages, this._usersById]).then(res => {
+      const pages = res[0];
+      const usersById = res[1];
+      pages.forEach(page => {
+        page.author_ref = usersById[page.author];
+        page = this.tryConvertingDates(page);
+      });
+      return pages;
+    });
+    this._pagesById = <Promise<IWpPage[]>>this.orderById(this.pages);
   }
   public refreshTags(): void {
     this.tags = this.requestType('tags');
-    this.tagsById = <Promise<(IWpTaxonomy|undefined)[]>>this.orderById(this.tags);
+    this._tagsById = <Promise<IWpTaxonomy[]>>this.orderById(this.tags);
   }
   public refreshCategories(): void {
     this.categories = this.requestType('categories');
-    this.categoriesById = <Promise<(IWpTaxonomy|undefined)[]>>this.orderById(this.categories);
+    this._categoriesById = <Promise<IWpTaxonomy[]>>this.orderById(this.categories);
   }
   public refreshUsers(): void {
     this.users = this.requestType('users');
-    this.usersById = <Promise<(IWpUser|undefined)[]>>this.orderById(this.users);
+    this._usersById = <Promise<IWpUser[]>>this.orderById(this.users);
   }
 
-  public orderById(promise: Promise<IWpId[]>): Promise<(IWpId|undefined)[]> {
+  private orderById(promise: Promise<IWpId[]>): Promise<IWpId[]> {
     return promise.then(items => {
       const itemsById: (IWpId|undefined)[] = [];
       items.forEach(item => itemsById[item.id] = item );
       return itemsById;
     });
   }
+
   public requestType(type: string): Promise<any> {
     let store = [];
     return new Promise((resolve, reject) => {
@@ -105,6 +129,15 @@ export class WpRestService {
       };
       requestPostSet();
     });
+  }
+
+  private tryConvertingDates<T>(obj: T): T {
+    const item: any = obj;
+    if (item.date) item.date = new Date(item.date);
+    if (item.date_gmt) item.date_gmt = new Date(item.date_gmt);
+    if (item.modified) item.modified = new Date(item.modified);
+    if (item.modified_gmt) item.modified_gmt = new Date(item.modified_gmt);
+    return item;
   }
 
   public getPostOrPage(slug: string): Promise<IWpPage | false> {
@@ -201,13 +234,13 @@ export class WpRestService {
       })
       .toPromise();
     this.options.then(options => console.log('options', options));
-   }
+  }
 
   public getComments(post: IWpPage): Promise<IWpComment[]> {
     // maybe save the comments somehow?
     // console.log(post._links.replies[0].href);
 
-    return this.http
+    const commentsRequest: Promise<IWpComment[]> = this.http
       .get(post._links.replies[0].href + '&per_page=100')
       .map((res: Response) => res.json())
       .catch((err: Response | any) => {
@@ -215,6 +248,16 @@ export class WpRestService {
         return Observable.throw(err);
       })
       .toPromise();
+
+    return Promise.all([commentsRequest, this._usersById]).then(res => {
+      const comments = res[0];
+      const usersById = res[1];
+      comments.forEach(comment => {
+        comment.author_ref = usersById[comment.author];
+        comment = this.tryConvertingDates(comment);
+        });
+      return comments;
+    });
   }
 
 }

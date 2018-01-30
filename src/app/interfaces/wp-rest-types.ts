@@ -24,18 +24,19 @@ export interface IWpId {
 
 export interface IWpPage extends IWpId {
     author: number;
+    author_ref?: IWpUser;
     comment_status: 'open' | 'closed'; // TODO: add the rest
     content: IWpContentProtected;
-    date: string;
-    date_gmt: string;
+    date: string | Date;
+    date_gmt: string | Date;
     excerpt: IWpContentProtected;
     featured_media: number;
     guid: IWpContent;
     link: string;
     menu_order: number;
     meta: string[]; // is this right?
-    modified: string; // Date?
-    modified_gmt: string; // Date?
+    modified: string | Date; // Date?
+    modified_gmt: string | Date; // Date?
     parent: number; // not in IPost...
     ping_status: 'open' | 'closed'; // TODO: add the rest
     slug: string;
@@ -57,10 +58,12 @@ export interface IWpPage extends IWpId {
 
 export interface IWpPost extends IWpPage {
     categories: number[];
+    categories_ref?: IWpTaxonomy[];
     format: 'standard' | 'link' | 'video' | 'aside' | 'audio' | 'chat' | 'gallery' | 'image' | 'quote' | 'status';
     parent: undefined; // to negate the parent in IPage?
     sticky: boolean;
     tags: number[];
+    tags_ref?: IWpTaxonomy[];
     _links: {
         about: IWpLinkHref[];
         author: IWpLinkHrefEmbeddable[];
@@ -113,12 +116,13 @@ export interface IWpUser extends IWpId {
 
 export interface IWpComment extends IWpId {
     author: number;
+    author_ref: IWpUser;
     author_avatar_urls: IWpAvatarUrls;
     author_name: string;
     author_url: string;
     content: IWpContent;
-    date: string;
-    date_gmt: string;
+    date: string | Date;
+    date_gmt: string | Date;
     link: string;
     meta: string[];
     parent: number;
@@ -144,11 +148,11 @@ export interface IWpOptions {
         thread_comments: boolean;
         thread_comments_depth: number;
         show_avatars: boolean;
-        avatar_default: 'mystery'|'blank'|'gravatar_default'|'identicon'|'wavatar'|'monsterid'|'retro';
+        avatar_default: 'mystery' | 'blank' | 'gravatar_default' | 'identicon' | 'wavatar' | 'monsterid' | 'retro';
         page_comments: boolean;
         comments_per_page: number;
-        default_comments_page: 'newest'|string;
-        comment_order: 'desc'|'asc';
+        default_comments_page: 'newest' | string;
+        comment_order: 'desc' | 'asc';
     };
     general: {
         admin_email: string;
