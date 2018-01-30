@@ -3,6 +3,10 @@
     <h3 [routerLink]="'/' + post.slug">
       {{ post.title.rendered }}
     </h3>
+    <img 
+      *ngIf="post.featured_media_ref" 
+      [src]="post.featured_media_ref.media_details.sizes.thumbnail.source_url" 
+      />
     <p>
       <strong>By: </strong>
       <a [routerLink]="'/author/' + post.author_ref.slug" >

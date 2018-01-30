@@ -31,6 +31,7 @@ export interface IWpPage extends IWpId {
     date_gmt: string | Date;
     excerpt: IWpContentProtected;
     featured_media: number;
+    featured_media_ref: IWpMedia;
     guid: IWpContent;
     link: string;
     menu_order: number;
@@ -81,6 +82,8 @@ export interface IWpPost extends IWpPage {
         }[];
     };
 }
+
+export interface IWpMedia extends IWpPost {}
 
 export interface IWpTaxonomy extends IWpId { // IWpCategory & IWpTag
     count: number;

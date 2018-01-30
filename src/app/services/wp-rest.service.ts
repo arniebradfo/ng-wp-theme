@@ -8,7 +8,7 @@ import 'rxjs/add/operator/toPromise';
 
 
 import { environment } from '../../environments/environment';
-import { IWpMenuItem, IWpPost, IWpPage, IWpTaxonomy, IWpUser, IWpComment, IWpOptions, IWpId } from '../interfaces/wp-rest-types';
+import { IWpMenuItem, IWpPost, IWpPage, IWpTaxonomy, IWpUser, IWpComment, IWpOptions, IWpId, IWpMedia } from '../interfaces/wp-rest-types';
 
 @Injectable()
 export class WpRestService {
@@ -24,6 +24,9 @@ export class WpRestService {
   public pages: Promise<IWpPage[]>;
   private _pagesById: Promise<IWpPage[]>;
 
+  public media: Promise<IWpMedia[]>;
+  private _mediaById: Promise<IWpMedia[]>;
+
   public tags: Promise<IWpTaxonomy[]>;
   private _tagsById: Promise<IWpTaxonomy[]>;
 
@@ -38,30 +41,45 @@ export class WpRestService {
   constructor(
     private http: Http,
   ) {
+    console.time('WpRestService');
+
     // generate all properties.
     this.refreshOptions();
     this.refreshTags();
     this.refreshCategories();
     this.refreshUsers();
+    this.refreshMedia();
 
     this.refreshPosts();
     this.refreshPages();
+
+    Promise.all([
+      this.posts,
+      this.pages,
+      this.media,
+      this.tags,
+      this.categories,
+      this.users,
+      this.options
+    ]).then(res => console.timeEnd('WpRestService'));
   }
 
   public refreshPosts(): void {
     this.posts = this.requestType('posts');
-    this.posts = Promise.all([this.posts, this._tagsById, this._categoriesById, this._usersById]).then(res => {
+    this.posts = Promise.all([this.posts, this._mediaById, this._tagsById, this._categoriesById, this._usersById]).then(res => {
       // TODO: reorder so sticky posts are at the top
       const posts = res[0];
-      const tagsById = res[1];
-      const categoriesById = res[2];
-      const usersById = res[3];
+      const mediaById = res[1];
+      const tagsById = res[2];
+      const categoriesById = res[3];
+      const usersById = res[4];
       posts.forEach(post => {
         post.tags_ref = [];
         post.categories_ref = [];
         post.tags.forEach(tagId => post.tags_ref.push(tagsById[tagId]) );
         post.categories.forEach(categoryId => post.categories_ref.push(categoriesById[categoryId]) );
         post.author_ref = usersById[post.author];
+        post.featured_media_ref = mediaById[post.featured_media];
         post = this.tryConvertingDates(post);
       });
       return posts;
@@ -70,11 +88,13 @@ export class WpRestService {
   }
   public refreshPages(): void {
     this.pages = this.requestType('pages');
-    this.pages = Promise.all([this.pages, this._usersById]).then(res => {
+    this.pages = Promise.all([this.pages, this._mediaById, this._usersById]).then(res => {
       const pages = res[0];
-      const usersById = res[1];
+      const mediaById = res[1];
+      const usersById = res[2];
       pages.forEach(page => {
         page.author_ref = usersById[page.author];
+        page.featured_media_ref = mediaById[page.featured_media];
         page = this.tryConvertingDates(page);
       });
       return pages;
@@ -92,6 +112,10 @@ export class WpRestService {
   public refreshUsers(): void {
     this.users = this.requestType('users');
     this._usersById = <Promise<IWpUser[]>>this.orderById(this.users);
+  }
+  public refreshMedia(): void {
+    this.media = this.requestType('media');
+    this._mediaById = <Promise<IWpPage[]>>this.orderById(this.media);
   }
 
   private orderById(promise: Promise<IWpId[]>): Promise<IWpId[]> {
