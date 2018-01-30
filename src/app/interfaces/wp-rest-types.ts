@@ -18,7 +18,11 @@ export interface IWpMenuItem {
     xfn: string;
 }
 
-export interface IWpPage {
+export interface IWpId {
+    id: number;
+}
+
+export interface IWpPage extends IWpId {
     author: number;
     comment_status: 'open' | 'closed'; // TODO: add the rest
     content: IWpContentProtected;
@@ -27,7 +31,6 @@ export interface IWpPage {
     excerpt: IWpContentProtected;
     featured_media: number;
     guid: IWpContent;
-    id: number;
     link: string;
     menu_order: number;
     meta: string[]; // is this right?
@@ -76,10 +79,9 @@ export interface IWpPost extends IWpPage {
     };
 }
 
-export interface IWpTaxonomy { // IWpCategory & IWpTag
+export interface IWpTaxonomy extends IWpId { // IWpCategory & IWpTag
     count: number;
     description: string;
-    id: number;
     link: string;
     meta: string[]; // ???
     name: string;
@@ -95,10 +97,9 @@ export interface IWpTaxonomy { // IWpCategory & IWpTag
     };
 }
 
-export interface IWpUser {
+export interface IWpUser extends IWpId {
     avatar_urls: IWpAvatarUrls;
     description: string;
-    id: number;
     link: string;
     meta: string[];
     name: string;
@@ -110,7 +111,7 @@ export interface IWpUser {
     };
 }
 
-export interface IWpComment {
+export interface IWpComment extends IWpId {
     author: number;
     author_avatar_urls: IWpAvatarUrls;
     author_name: string;
@@ -118,7 +119,6 @@ export interface IWpComment {
     content: IWpContent;
     date: string;
     date_gmt: string;
-    id: number;
     link: string;
     meta: string[];
     parent: number;

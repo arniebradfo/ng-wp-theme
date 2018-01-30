@@ -1,9 +1,29 @@
 <ul>
-  <li 
-    *ngFor="let post of posts" 
-    [routerLink]="'/' + post.slug"
-    >
-    {{ post.title.rendered }}
+  <li *ngFor="let post of posts" >
+    <h3 [routerLink]="'/' + post.slug">
+      {{ post.title.rendered }}
+    </h3>
+    <p><small>
+      {{ post.excerpt.rendered }}
+    </small></p>
+    <p *ngIf="post.tags != null && post.tags.length > 0">
+        <strong>Tags: </strong>
+        <a 
+        *ngFor="let tag of post.tags"
+        [routerLink]="'/tag/' + tagsById[tag].slug"
+        >
+        {{'#' + tagsById[tag].slug}}
+      </a>
+    </p>
+    <p *ngIf="post.categories != null && post.categories.length > 0">
+        <strong>Categories: </strong>
+        <a 
+        *ngFor="let category of post.categories"
+        [routerLink]="'/category/' + categoriesById[category].slug"
+        >
+        {{categoriesById[category].slug}}
+      </a>
+    </p>
   </li>
 </ul>
 

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IWpPost, IWpPage } from '../../interfaces/wp-rest-types';
+import { IWpPost, IWpPage, IWpTaxonomy } from '../../interfaces/wp-rest-types';
 import { WpRestService } from '../../services/wp-rest.service';
 import { ActivatedRoute, Params } from '@angular/router';
 
@@ -10,6 +10,9 @@ import { ActivatedRoute, Params } from '@angular/router';
 export class PostListComponent implements OnInit {
 
   posts: (IWpPost | IWpPage)[];
+  tagsById: (IWpTaxonomy | undefined)[];
+  categoriesById: (IWpTaxonomy | undefined)[];
+
   error: string;
   postsPerPage: number;
   pageNumber: number;
@@ -45,11 +48,16 @@ export class PostListComponent implements OnInit {
 
         Promise.all([
           this.wpRestService.getPosts(type, slug),
-          this.wpRestService.options
+          this.wpRestService.options,
+          this.wpRestService.categoriesById,
+          this.wpRestService.tagsById
         ]).then(res => {
 
           const posts = res[0];
           const options = res[1];
+          this.categoriesById = res[2];
+          this.tagsById = res[3];
+
           this.postsPerPage = options.reading.posts_per_page;
           this.pageCount = Array(Math.ceil(posts.length / this.postsPerPage)).fill(0);
 

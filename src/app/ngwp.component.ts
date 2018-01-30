@@ -9,12 +9,12 @@ import { WpRestService } from 'app/services/wp-rest.service';
 export class NgWpComponent implements OnInit {
   public blogName: string;
   public blogDescription: string;
-  
+
   constructor(
     private wpRestService: WpRestService,
     // private activatedRoute: ActivatedRoute
   ) { }
-  
+
   ngOnInit(): void {
     this.wpRestService.options.then(options => {
       this.blogName = options.general.blogname;

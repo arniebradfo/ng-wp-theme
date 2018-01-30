@@ -8,7 +8,7 @@ import 'rxjs/add/operator/toPromise';
 
 
 import { environment } from '../../environments/environment';
-import { IWpMenuItem, IWpPost, IWpPage, IWpTaxonomy, IWpUser, IWpComment, IWpOptions } from '../interfaces/wp-rest-types';
+import { IWpMenuItem, IWpPost, IWpPage, IWpTaxonomy, IWpUser, IWpComment, IWpOptions, IWpId } from '../interfaces/wp-rest-types';
 
 @Injectable()
 export class WpRestService {
@@ -19,10 +19,20 @@ export class WpRestService {
   private _ngWp: string = this._wpDomain + 'wp-json/ngwp/v2/';
 
   public posts: Promise<IWpPost[]>;
+  public postsById: Promise<(IWpPost|undefined)[]>;
+
   public pages: Promise<IWpPage[]>;
+  public pagesById: Promise<(IWpPage|undefined)[]>;
+
   public tags: Promise<IWpTaxonomy[]>;
+  public tagsById: Promise<(IWpTaxonomy|undefined)[]>;
+
   public categories: Promise<IWpTaxonomy[]>;
+  public categoriesById: Promise<(IWpTaxonomy|undefined)[]>;
+
   public users: Promise<IWpUser[]>;
+  public usersById: Promise<(IWpUser|undefined)[]>;
+
   public options: Promise<IWpOptions>;
 
   constructor(
@@ -42,21 +52,33 @@ export class WpRestService {
       // TODO: reorder so sticky posts are at the top
       return posts;
     });
+    this.postsById = <Promise<(IWpPost|undefined)[]>>this.orderById(this.posts);
   }
   public refreshPages(): void {
     this.pages = this.requestType('pages');
+    this.pagesById = <Promise<(IWpPage|undefined)[]>>this.orderById(this.pages);
   }
   public refreshTags(): void {
     this.tags = this.requestType('tags');
+    this.tagsById = <Promise<(IWpTaxonomy|undefined)[]>>this.orderById(this.tags);
   }
   public refreshCategories(): void {
     this.categories = this.requestType('categories');
+    this.categoriesById = <Promise<(IWpTaxonomy|undefined)[]>>this.orderById(this.categories);
   }
   public refreshUsers(): void {
     this.users = this.requestType('users');
+    this.usersById = <Promise<(IWpUser|undefined)[]>>this.orderById(this.users);
   }
 
-  public requestType(type): Promise<any> {
+  public orderById(promise: Promise<IWpId[]>): Promise<(IWpId|undefined)[]> {
+    return promise.then(items => {
+      const itemsById: (IWpId|undefined)[] = [];
+      items.forEach(item => itemsById[item.id] = item );
+      return itemsById;
+    });
+  }
+  public requestType(type: string): Promise<any> {
     let store = [];
     return new Promise((resolve, reject) => {
       let page = 1;
@@ -178,7 +200,6 @@ export class WpRestService {
         return Observable.throw(err);
       })
       .toPromise();
-      
     this.options.then(options => console.log('options', options));
    }
 
