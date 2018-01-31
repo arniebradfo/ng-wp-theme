@@ -64,6 +64,10 @@ export class PostComponent implements OnInit, OnDestroy {
     this.destroyDynamicComponents.forEach(destroyDynamicComponent => destroyDynamicComponent());
   }
 
+  public postComment(comment: IWpComment) {
+    this.wpRestService.postComment(comment);
+  }
+
   public getPost(slug) {
     this.wpRestService
       .getPostOrPage(slug)
@@ -114,7 +118,7 @@ export class PostComponent implements OnInit, OnDestroy {
     return comments;
   }
 
-  renderComponents(): any {
+  private renderComponents(): any {
     const componentSet = this.content.nativeElement.querySelectorAll('[data-component]');
 
     // TODO: need to find the highest first? test with nested elements

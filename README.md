@@ -22,14 +22,14 @@ Pull requests always welcome
 
 ## TODOs:
 - comment submission
-- shortcodes
 - widgets
     - search
+- shortcodes
 
 ### TODOs: less important
 - put sticky posts first
-- child page routing
 - multi page post pagination
+- child page routing
 - use date and time formatting from options obj:
     - map [Anuglar date pipe](https://angular.io/api/common/DatePipe) to [php date formatting](https://codex.wordpress.org/Formatting_Date_and_Time)
 
@@ -37,7 +37,7 @@ Pull requests always welcome
 - ROUTES TO POST/PAGE
     - `/{post-or-page-slug}/` 👍
     - `/{post-slug}/page/{page-number}/` 
-    - `/{post-slug}/comment-page-{number}/#comments` 👎 this doesn't work because we can't match partial route strings
+    - `/{post-slug}/comment-page-{number}/#comments` 👎 this doesn't work because we can't match partial route params in a string
     - `/{post-slug}/comment-page/{comment-page-number}` 👍
     - `/{page-slug}/{child-page-slug}/{grandchild-page-slug}/{ect...}`
 - ROUTES TO LIST

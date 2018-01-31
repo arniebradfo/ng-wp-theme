@@ -215,6 +215,7 @@ export interface IWpOptions {
             _multiwidget: number;
         };
     };
+    nonce: string;
 }
 
 interface IWpDetailsImg {

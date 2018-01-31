@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { Http, Response, RequestOptionsArgs, Headers } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/map';
@@ -76,8 +76,8 @@ export class WpRestService {
       posts.forEach(post => {
         post.tags_ref = [];
         post.categories_ref = [];
-        post.tags.forEach(tagId => post.tags_ref.push(tagsById[tagId]) );
-        post.categories.forEach(categoryId => post.categories_ref.push(categoriesById[categoryId]) );
+        post.tags.forEach(tagId => post.tags_ref.push(tagsById[tagId]));
+        post.categories.forEach(categoryId => post.categories_ref.push(categoriesById[categoryId]));
         post.author_ref = usersById[post.author];
         post.featured_media_ref = mediaById[post.featured_media];
         post = this.tryConvertingDates(post);
@@ -129,8 +129,8 @@ export class WpRestService {
 
   private orderById(promise: Promise<IWpId[]>): Promise<IWpId[]> {
     return promise.then(items => {
-      const itemsById: (IWpId|undefined)[] = [];
-      items.forEach(item => itemsById[item.id] = item );
+      const itemsById: (IWpId | undefined)[] = [];
+      items.forEach(item => itemsById[item.id] = item);
       return itemsById;
     });
   }
@@ -309,8 +309,46 @@ export class WpRestService {
       comments.forEach(comment => {
         comment.author_ref = usersById[comment.author];
         comment = this.tryConvertingDates(comment);
-        });
+      });
       return comments;
+    });
+  }
+
+  public postComment(comment: IWpComment): void {
+
+    this.options.then(options => {
+
+      console.log(comment);
+
+      // https://stackoverflow.com/a/42352967/5648839
+      const headers: RequestOptionsArgs = {
+        headers: new Headers({
+          'X-WP-Nonce': options.nonce
+        })
+      };
+
+      const body = {
+        author: comment.author,
+        author_email: 'thing@place.net',
+        // author_ip: '',
+        author_name: comment.author_name,
+        author_url: comment.author_url,
+        author_user_agent: window.navigator.userAgent,
+        content: 'this is another test comment',
+        // date:	new Date(Date.now()).toLocaleString()
+        date_gmt: new Date(Date.now()).toISOString(),
+        parent: comment.id,
+        post: comment.post,
+        // status: 'approved', // ???
+        // meta:	[]
+      };
+
+      this.http.post(this._wpRest + 'comments', body, headers)
+        .map((res: Response) => res.json())
+        .toPromise()
+        .then(res => {
+          console.log(res);
+        }, err => console.log(err));
     });
   }
 

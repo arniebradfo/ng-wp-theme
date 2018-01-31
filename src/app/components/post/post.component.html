@@ -9,8 +9,9 @@
   <ol id="comments">
     <ng-template #recursiveList let-comments>
       <li *ngFor="let comment of comments">
-        <h6>{{comment.author_name}} at {{comment.date}}</h6>
+        <h6>{{comment.author_name}} at {{comment.date | date: 'MMM d, y, h:mm a' }}</h6>
         <p [innerHTML]="comment.content.rendered"></p>
+        <a (click)="postComment(comment)">Reply!</a>
         <ul *ngIf="comment.children.length > 0">
           <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: comment.children }"></ng-container>
         </ul>
