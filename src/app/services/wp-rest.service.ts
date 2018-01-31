@@ -115,6 +115,15 @@ export class WpRestService {
   }
   public refreshMedia(): void {
     this.media = this.requestType('media');
+    this.media = Promise.all([this.media, this._usersById]).then(res => {
+      const medias = res[0];
+      const usersById = res[1];
+      medias.forEach(media => {
+        media.author_ref = usersById[media.author];
+        media = this.tryConvertingDates(media);
+      });
+      return medias;
+    });
     this._mediaById = <Promise<IWpMedia[]>>this.orderById(this.media);
   }
 
@@ -164,12 +173,33 @@ export class WpRestService {
     return item;
   }
 
-  public getPostOrPage(slug: string): Promise<IWpPage | false> {
+  public getPostOrPage(slug: string): Promise<IWpPage | undefined> {
     return Promise.all([this.posts, this.pages]).then(res => {
       for (let i = 0; i < res.length; i++)
         for (let j = 0; j < res[i].length; j++)
-          if (slug === res[i][j].slug) return res[i][j];
-      return false;
+          if (slug === res[i][j].slug)
+            return res[i][j];
+      return undefined;
+    });
+  }
+
+  public getAdjcentPosts(slug: string): Promise<{
+    previous: IWpPost | undefined;
+    next: IWpPost | undefined;
+  }> {
+    return this.posts.then(posts => {
+      let previous, next;
+      for (let i = 0; i < posts.length; i++) {
+        const post = posts[i];
+        if (post.slug === slug) {
+          previous = i > 0 ? posts[i - 1] : posts[posts.length - 1];
+          next = i < posts.length - 1 ? posts[i + 1] : posts[0];
+        }
+      }      
+      return {
+        previous: previous,
+        next: next
+      };
     });
   }
 

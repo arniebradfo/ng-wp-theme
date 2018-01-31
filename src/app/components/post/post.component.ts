@@ -32,6 +32,7 @@ export class PostComponent implements OnInit, OnDestroy {
   comments: IWpComment[];
   error: any;
   postContent: SafeHtml;
+  adjcentPosts: { next: IWpPost; previous: IWpPost; };
 
   destroyDynamicComponents:  (() => void)[] = [];
 
@@ -48,19 +49,38 @@ export class PostComponent implements OnInit, OnDestroy {
     private applicationRef: ApplicationRef
   ) { }
 
+  ngOnInit() {
+    this.activatedRoute.params.forEach((params: Params) => {
+      const slug = params['slug'];
+      this.getPost(slug);
+    });
+  }
+
+  ngOnDestroy() {
+    this.destroyDynamicComponents.forEach(destroyDynamicComponent => destroyDynamicComponent());
+  }
+
   public getPost(slug) {
     this.wpRestService
       .getPostOrPage(slug)
-      .then((response) => {
-        if (!response) return;
-        this.post = response;
+      .then((post) => {
+        if (!post) return;
+        this.post = post;
         this.postContent = this.domSanitizer.bypassSecurityTrustHtml(this.post.content.rendered);
 
         this.wpRestService.getComments(this.post)
           .then(comments => {
             this.comments = this.generateCommentHeiarchy(comments);
-            console.log(this.comments);
+            // console.log(this.comments);
           });
+        
+        if (post.type === 'post') this.wpRestService.getAdjcentPosts(slug)
+          .then(posts => {
+            this.adjcentPosts = posts;
+            console.log(this.adjcentPosts);
+            
+          });
+
 
         window.setTimeout(() => { this.renderComponents(); }, 0);
 
@@ -80,17 +100,6 @@ export class PostComponent implements OnInit, OnDestroy {
     });
     comments = comments.filter(comment => comment.parent === 0 );
     return comments;
-  }
-
-  ngOnInit() {
-    this.activatedRoute.params.forEach((params: Params) => {
-      const slug = params['slug'];
-      this.getPost(slug);
-    });
-  }
-
-  ngOnDestroy() {
-    this.destroyDynamicComponents.forEach(destroyDynamicComponent => destroyDynamicComponent());
   }
 
   renderComponents(): any {

@@ -21,11 +21,12 @@ This project will play nice with the Angular CLI.
 Pull requests always welcome
 
 ## TODOs:
-- more buttons and feauters on the post-list
+- comment pagination
 - next/previous post
 - comment submission
 - shortcodes
 - widgets
+    - search
 
 ### TODOs: less important
 - put stickey posts first
