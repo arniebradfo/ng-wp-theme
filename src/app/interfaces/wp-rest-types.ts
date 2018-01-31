@@ -41,10 +41,10 @@ export interface IWpPage extends IWpId {
     parent: number; // not in IPost...
     ping_status: 'open' | 'closed'; // TODO: add the rest
     slug: string;
-    status: 'open' | 'closed' | 'publish'; // ??? TODO: add the rest
+    status: 'open' | 'closed' | 'publish' | 'inherit'; // ??? TODO: add the rest
     template: string;
     title: IWpContent;
-    type: 'post' | 'page'; // TODO: add the rest
+    type: 'post' | 'page' | 'attachment'; // TODO: add the rest
     _links: {
         about: IWpLinkHref[];
         author: IWpLinkHrefEmbeddable[];
@@ -61,7 +61,6 @@ export interface IWpPost extends IWpPage {
     categories: number[];
     categories_ref?: IWpTaxonomy[];
     format: 'standard' | 'link' | 'video' | 'aside' | 'audio' | 'chat' | 'gallery' | 'image' | 'quote' | 'status';
-    parent: undefined; // to negate the parent in IPage?
     sticky: boolean;
     tags: number[];
     tags_ref?: IWpTaxonomy[];
@@ -81,9 +80,29 @@ export interface IWpPost extends IWpPage {
             taxonomy: 'category' | 'post_tag'; // TODO: add the rest
         }[];
     };
+    parent: undefined;
 }
 
-export interface IWpMedia extends IWpPost {}
+export interface IWpMedia extends IWpPage {
+    description: IWpContent;
+    caption: IWpContent;
+    alt_text: string;
+    media_type: 'image' | 'file';
+    mime_type: string;
+    media_details: IWpDetailsImg | IWpDetailsAudio | IWpDetailsVideo;
+    post: number | null;
+    source_url: string;
+    _links: {
+        about: IWpLinkHref[];
+        author: IWpLinkHrefEmbeddable[];
+        collection: IWpLinkHref[];
+        self: IWpLinkHref[];
+        replies: IWpLinkHrefEmbeddable[];
+        curies: undefined;
+        'version-history': undefined;
+        'wp:attachment': undefined;
+    };
+}
 
 export interface IWpTaxonomy extends IWpId { // IWpCategory & IWpTag
     count: number;
@@ -196,6 +215,85 @@ export interface IWpOptions {
             _multiwidget: number;
         };
     };
+}
+
+interface IWpDetailsImg {
+    width: number;
+    height: number;
+    file: string;
+    sizes: {
+        [size: string]: {
+            file: string;
+            width: number;
+            height: number;
+            mime_type: string;
+            source_url: string;
+        };
+    };
+    image_meta: {
+        aperture: string;
+        credit: string;
+        camera: string;
+        caption: string;
+        created_timestamp: string;
+        copyright: string;
+        focal_length: string;
+        iso: string;
+        shutter_speed: string;
+        title: string;
+        orientation: string;
+        keywords: string[];
+    };
+}
+
+interface IWpDetailsAudio {
+    dataformat: string;
+    channels: number;
+    sample_rate: number;
+    bitrate: number;
+    channelmode: string;
+    bitrate_mode: string;
+    lossless: boolean;
+    encoder_options: string;
+    compression_ratio: number;
+    fileformat: string;
+    filesize: number;
+    mime_type: string;
+    length: number;
+    length_formatted: string;
+    title: string;
+    artist: string;
+    track_number: string;
+    part_of_a_set: string;
+    year: string;
+    genre: string;
+    part_of_a_compilation: string;
+    comment: string;
+    encoded_by: string;
+    album: string;
+    sizes: {};
+}
+
+interface IWpDetailsVideo {
+    filesize: number;
+    mime_type: string;
+    length: number;
+    length_formatted: string;
+    width: number;
+    height: number;
+    fileformat: string;
+    dataformat: string;
+    audio: {
+        dataformat: string;
+        codec: string;
+        sample_rate: number;
+        channels: number;
+        bits_per_sample: number;
+        lossless: boolean;
+        channelmode: string;
+    };
+    created_timestamp?: number;
+    sizes: {};
 }
 
 interface IWpAvatarUrls {

@@ -115,7 +115,7 @@ export class WpRestService {
   }
   public refreshMedia(): void {
     this.media = this.requestType('media');
-    this._mediaById = <Promise<IWpPage[]>>this.orderById(this.media);
+    this._mediaById = <Promise<IWpMedia[]>>this.orderById(this.media);
   }
 
   private orderById(promise: Promise<IWpId[]>): Promise<IWpId[]> {
