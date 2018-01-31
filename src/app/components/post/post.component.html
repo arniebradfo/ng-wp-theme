@@ -6,7 +6,7 @@
 
   <div #content [innerHTML]="postContent"></div>
 
-  <ul id="comments">
+  <ol id="comments">
     <ng-template #recursiveList let-comments>
       <li *ngFor="let comment of comments">
         <h6>{{comment.author_name}} at {{comment.date}}</h6>
@@ -17,7 +17,19 @@
       </li>
     </ng-template>
     <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: comments }"></ng-container>
-  </ul>
+  </ol>
+
+  <span>Comments Pagination</span>
+  <nav>
+    <ul>
+      <li 
+      *ngFor="let count of commentsPageCount; let i = index" 
+      [routerLink]="'/' + post.slug + '/comments-page/' + (i+1)"
+      >
+      {{i+1}}
+      </li>
+    </ul>
+  </nav>
 
   <div *ngIf="adjcentPosts">
     <strong>Previous Post:</strong>

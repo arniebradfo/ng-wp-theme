@@ -195,7 +195,7 @@ export class WpRestService {
           previous = i > 0 ? posts[i - 1] : posts[posts.length - 1];
           next = i < posts.length - 1 ? posts[i + 1] : posts[0];
         }
-      }      
+      }
       return {
         previous: previous,
         next: next

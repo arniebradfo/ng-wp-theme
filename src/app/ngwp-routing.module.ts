@@ -18,6 +18,10 @@ const routes: Routes = [
     component: PostComponent
   },
   {
+    path: ':slug/comments-page/:commentsPageNumber',
+    component: PostComponent
+  },
+  {
     path: ':slug/page/:pageNumber',
     component: PostComponent
   },

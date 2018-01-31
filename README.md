@@ -21,24 +21,24 @@ This project will play nice with the Angular CLI.
 Pull requests always welcome
 
 ## TODOs:
-- comment pagination
-- next/previous post
 - comment submission
 - shortcodes
 - widgets
     - search
 
 ### TODOs: less important
-- put stickey posts first
+- put sticky posts first
 - child page routing
+- multi page post pagination
 - use date and time formatting from options obj:
     - map [Anuglar date pipe](https://angular.io/api/common/DatePipe) to [php date formatting](https://codex.wordpress.org/Formatting_Date_and_Time)
 
 ### Routing:
 - ROUTES TO POST/PAGE
     - `/{post-or-page-slug}/` 👍
-    - `/{post}/{page-number}/` 👍
-    - `/{post}/comment-page-{number}/#comments`
+    - `/{post-slug}/page/{page-number}/` 
+    - `/{post-slug}/comment-page-{number}/#comments` 👎 this doesn't work because we can't match partial route strings
+    - `/{post-slug}/comment-page/{comment-page-number}` 👍
     - `/{page-slug}/{child-page-slug}/{grandchild-page-slug}/{ect...}`
 - ROUTES TO LIST
     - `/` 👍

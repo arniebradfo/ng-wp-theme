@@ -33,8 +33,11 @@ export class PostComponent implements OnInit, OnDestroy {
   error: any;
   postContent: SafeHtml;
   adjcentPosts: { next: IWpPost; previous: IWpPost; };
+  commentsPerPage: number;
+  commentsPageCount: number[];
+  commentsPageNumber: number;
 
-  destroyDynamicComponents:  (() => void)[] = [];
+  destroyDynamicComponents: (() => void)[] = [];
 
   @ViewChild('content', { read: ViewContainerRef }) contentViewContainerRef: ViewContainerRef;
   @ViewChild('content', { read: ElementRef }) content: ElementRef;
@@ -51,6 +54,7 @@ export class PostComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.activatedRoute.params.forEach((params: Params) => {
+      this.commentsPageNumber = +params['commentsPageNumber'] || 1;
       const slug = params['slug'];
       this.getPost(slug);
     });
@@ -65,22 +69,30 @@ export class PostComponent implements OnInit, OnDestroy {
       .getPostOrPage(slug)
       .then((post) => {
         if (!post) return;
+
         this.post = post;
         this.postContent = this.domSanitizer.bypassSecurityTrustHtml(this.post.content.rendered);
 
-        this.wpRestService.getComments(this.post)
-          .then(comments => {
-            this.comments = this.generateCommentHeiarchy(comments);
-            // console.log(this.comments);
-          });
-        
-        if (post.type === 'post') this.wpRestService.getAdjcentPosts(slug)
-          .then(posts => {
-            this.adjcentPosts = posts;
-            console.log(this.adjcentPosts);
-            
-          });
+        Promise.all([
+          this.wpRestService.getComments(this.post),
+          this.wpRestService.options
+        ]).then(res => {
+          let comments = res[0];
+          comments = this.generateCommentHeiarchy(comments);
 
+          const options = res[1];
+          this.commentsPerPage = options.reading.posts_per_page;
+          this.commentsPageCount = Array(Math.ceil(comments.length / this.commentsPerPage)).fill(0);
+
+          const lowerIndex = this.commentsPerPage * (this.commentsPageNumber - 1);
+          const upperIndex = this.commentsPerPage * this.commentsPageNumber;
+          this.comments = comments.slice(lowerIndex, upperIndex);
+
+        });
+
+        if (post.type === 'post')
+          this.wpRestService.getAdjcentPosts(slug)
+            .then(posts => this.adjcentPosts = posts);
 
         window.setTimeout(() => { this.renderComponents(); }, 0);
 
@@ -98,7 +110,7 @@ export class PostComponent implements OnInit, OnDestroy {
         return parentComment.id === comment.parent;
       }).children.push(comment);
     });
-    comments = comments.filter(comment => comment.parent === 0 );
+    comments = comments.filter(comment => comment.parent === 0);
     return comments;
   }
 
@@ -142,6 +154,6 @@ export class PostComponent implements OnInit, OnDestroy {
       // remove the old component
       this.renderer.removeChild(node.parentNode, node);
     }
-}
+  }
 
 }
