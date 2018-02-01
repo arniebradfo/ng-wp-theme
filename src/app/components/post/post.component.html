@@ -6,12 +6,17 @@
 
   <div #content [innerHTML]="postContent"></div>
 
+
+  <ngwp-comment-form *ngIf="rootCommentFormOpen" [post]="post"></ngwp-comment-form>
+
   <ol id="comments">
     <ng-template #recursiveList let-comments>
       <li *ngFor="let comment of comments">
         <h6>{{comment.author_name}} at {{comment.date | date: 'MMM d, y, h:mm a' }}</h6>
         <p [innerHTML]="comment.content.rendered"></p>
-        <a (click)="postComment(comment)">Reply!</a>
+        <ngwp-comment-form *ngIf="comment.formOpen" [post]="post" [parent]="comment"></ngwp-comment-form>
+        <button *ngIf="!comment.formOpen" (click)="openCommentReply(comment)">Reply!</button>
+        <button *ngIf="comment.formOpen" (click)="closeCommentReply(comment)">Cancel</button>
         <ul *ngIf="comment.children.length > 0">
           <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: comment.children }"></ng-container>
         </ul>

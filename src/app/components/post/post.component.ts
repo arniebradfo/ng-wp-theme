@@ -13,8 +13,8 @@ import {
   OnDestroy
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { IWpPost, IWpPage, IWpComment } from '../../interfaces/wp-rest-types';
-import { WpRestService } from '../../services/wp-rest.service';
+import { IWpPost, IWpPage, IWpComment } from 'app/interfaces/wp-rest-types';
+import { WpRestService } from 'app/services/wp-rest.service';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { COMPONENTREGISTRY } from 'app/app-component-registry';
 
@@ -29,13 +29,15 @@ export class PostComponent implements OnInit, OnDestroy {
 
 
   post: IWpPage; // : IPost;
-  comments: IWpComment[];
+  comments: IWpCommentExtended[];
+  allComments: IWpCommentExtended[];
   error: any;
   postContent: SafeHtml;
   adjcentPosts: { next: IWpPost; previous: IWpPost; };
   commentsPerPage: number;
   commentsPageCount: number[];
   commentsPageNumber: number;
+  rootCommentFormOpen: boolean = true;
 
   destroyDynamicComponents: (() => void)[] = [];
 
@@ -64,8 +66,20 @@ export class PostComponent implements OnInit, OnDestroy {
     this.destroyDynamicComponents.forEach(destroyDynamicComponent => destroyDynamicComponent());
   }
 
-  public postComment(comment: IWpComment) {
-    this.wpRestService.postComment(comment);
+  public openCommentReply(comment: IWpCommentExtended): void {
+    // this.wpRestService.postComment(comment);
+    this.closeAllCommentForms();
+    comment.formOpen = true;
+  }
+
+  public closeCommentReply(comment: IWpCommentExtended): void {
+    comment.formOpen = false;
+    this.rootCommentFormOpen = true;
+  }
+
+  public closeAllCommentForms(): void {
+    this.rootCommentFormOpen = false;
+    this.allComments.forEach(comment => comment.formOpen = false);
   }
 
   public getPost(slug) {
@@ -81,8 +95,8 @@ export class PostComponent implements OnInit, OnDestroy {
           this.wpRestService.getComments(this.post),
           this.wpRestService.options
         ]).then(res => {
-          let comments = res[0];
-          comments = this.generateCommentHeiarchy(comments);
+          this.allComments = res[0];
+          const comments = this.generateCommentHeiarchy(this.allComments);
 
           const options = res[1];
           this.commentsPerPage = options.reading.posts_per_page;
@@ -105,7 +119,7 @@ export class PostComponent implements OnInit, OnDestroy {
       });
   }
 
-  private generateCommentHeiarchy(comments: IWpComment[]): IWpComment[] {
+  private generateCommentHeiarchy(comments: IWpCommentExtended[]): IWpCommentExtended[] {
     // TODO: test this more
     comments.forEach(comment => comment.children = []);
     comments.forEach(comment => {
@@ -160,4 +174,9 @@ export class PostComponent implements OnInit, OnDestroy {
     }
   }
 
+}
+
+interface IWpCommentExtended extends IWpComment {
+  children?: IWpCommentExtended[];
+  formOpen?: boolean;
 }

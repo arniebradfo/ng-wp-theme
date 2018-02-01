@@ -314,11 +314,18 @@ export class WpRestService {
     });
   }
 
-  public postComment(comment: IWpComment): void {
+  public postComment(newComment: {
+    author_email: string;
+    author_name: string;
+    author_url?: string;
+    content: string;
+    post: number;
+    parent?: number;
+  }): void {
 
     this.options.then(options => {
 
-      console.log(options.nonce);
+      // console.log(options.nonce);
 
       // https://stackoverflow.com/a/42352967/5648839
       // const headers: RequestOptionsArgs = {
@@ -330,16 +337,16 @@ export class WpRestService {
 
       const body = {
         // author: comment.author,
-        author_email: 'arniebradfo@gmail.com',
+        author_email: newComment.author_email,
         // author_ip: '',
-        author_name: comment.author_name,
-        // author_url: comment.author_url,
-        // author_user_agent: window.navigator.userAgent,
-        content: { raw: 'this is another test comment' },
+        author_name: newComment.author_name,
+        author_url: newComment.author_url,
+        author_user_agent: window.navigator.userAgent,
+        content: { raw: newComment.content, },
         // date:	new Date(Date.now()).toLocaleString()
         date_gmt: new Date(Date.now()).toISOString(),
-        parent: comment.id,
-        post: comment.post,
+        parent: newComment.parent,
+        post: newComment.post,
         // status: 'approved', // ???
         // meta:	[]
       };

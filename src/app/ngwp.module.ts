@@ -11,6 +11,7 @@ import { PostComponent } from './components/post/post.component';
 import { PostListComponent } from './components/post-list/post-list.component';
 import { ExampleComponent } from './shortcodes/example/example.component';
 import { RecentPostsComponent } from './widgets/recent-posts/recent-posts.component';
+import { CommentFormComponent } from './components/comment-form/comment-form.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { RecentPostsComponent } from './widgets/recent-posts/recent-posts.compon
     PostComponent,
     PostListComponent,
     ExampleComponent,
-    RecentPostsComponent
+    RecentPostsComponent,
+    CommentFormComponent
   ],
   entryComponents: [ // all shortcodes go here
     ExampleComponent
