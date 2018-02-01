@@ -318,23 +318,24 @@ export class WpRestService {
 
     this.options.then(options => {
 
-      console.log(comment);
+      console.log(options.nonce);
 
       // https://stackoverflow.com/a/42352967/5648839
-      const headers: RequestOptionsArgs = {
-        headers: new Headers({
-          'X-WP-Nonce': options.nonce
-        })
-      };
+      // const headers: RequestOptionsArgs = {
+      //   headers: new Headers({
+      //     'X-WP-Nonce': options.nonce,
+      //     // 'Access-Control-Allow-Headers': Authorization, Content-Type
+      //   })
+      // };
 
       const body = {
-        author: comment.author,
-        author_email: 'thing@place.net',
+        // author: comment.author,
+        author_email: 'arniebradfo@gmail.com',
         // author_ip: '',
         author_name: comment.author_name,
-        author_url: comment.author_url,
-        author_user_agent: window.navigator.userAgent,
-        content: 'this is another test comment',
+        // author_url: comment.author_url,
+        // author_user_agent: window.navigator.userAgent,
+        content: { raw: 'this is another test comment' },
         // date:	new Date(Date.now()).toLocaleString()
         date_gmt: new Date(Date.now()).toISOString(),
         parent: comment.id,
@@ -343,7 +344,7 @@ export class WpRestService {
         // meta:	[]
       };
 
-      this.http.post(this._wpRest + 'comments', body, headers)
+      this.http.post(this._wpRest + 'comments', body)
         .map((res: Response) => res.json())
         .toPromise()
         .then(res => {

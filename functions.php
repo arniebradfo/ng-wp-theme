@@ -136,8 +136,9 @@
 				// 'widget_text' => get_option('widget_text'),
 				// 'widget_rss' => get_option('widget_rss'),
 			),
-			'nonce' => wp_create_nonce( 'wp_rest' )
+			// 'nonce' => wp_create_nonce( 'wp_rest' )
 		));
 	}
-
+	
+	add_filter('rest_allow_anonymous_comments', '__return_true');
 ?>
