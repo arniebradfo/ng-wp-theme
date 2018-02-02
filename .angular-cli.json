@@ -19,7 +19,7 @@
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "ngwp",
       "styles": [
-        "styles.css"
+        "../style.css"
       ],
       "scripts": [],
       "environmentSource": "environments/environment.ts",
