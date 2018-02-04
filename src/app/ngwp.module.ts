@@ -10,8 +10,8 @@ import { NavComponent } from './components/nav/nav.component';
 import { PostComponent } from './components/post/post.component';
 import { PostListComponent } from './components/post-list/post-list.component';
 import { ExampleComponent } from './shortcodes/example/example.component';
-import { RecentPostsComponent } from './widgets/recent-posts/recent-posts.component';
 import { CommentFormComponent } from './components/comment-form/comment-form.component';
+import { SearchComponent } from './components/search/search.component';
 
 @NgModule({
   declarations: [
@@ -20,8 +20,8 @@ import { CommentFormComponent } from './components/comment-form/comment-form.com
     PostComponent,
     PostListComponent,
     ExampleComponent,
-    RecentPostsComponent,
-    CommentFormComponent
+    CommentFormComponent,
+    SearchComponent
   ],
   entryComponents: [ // all shortcodes go here
     ExampleComponent

@@ -1,8 +1,8 @@
 <?php
 
-	function wpajax_theme_setup() {
+	function ngwp_theme_setup() {
 
-		// load_theme_textdomain( 'wpajax', get_template_directory() . '/languages' );
+		// load_theme_textdomain( 'ngwp', get_template_directory() . '/languages' );
 
 		// add_theme_support( 'html5', array( 'comment-list', 'comment-form', 'search-form', 'gallery', 'caption' ) );
 		// add_theme_support( 'automatic-feed-links' );
@@ -13,8 +13,8 @@
 
 		// Nav Menus
 		register_nav_menus( array(
-			'primary'   => __( 'Navigation Menu', 'wpajax' ),
-			'secondary' => __( 'Footer Menu', 'wpajax' ),
+			'primary'   => __( 'Navigation Menu', 'ngwp' ),
+			'secondary' => __( 'Footer Menu', 'ngwp' ),
 		) );
 
 		// featured images aka thumbnails
@@ -42,20 +42,20 @@
 		update_option('use_smilies', 0); // becasue fuck smiling >:( 
 
 	}
-	add_action( 'after_setup_theme', 'wpajax_theme_setup' );
+	add_action( 'after_setup_theme', 'ngwp_theme_setup' );
 
-	// Widgets
-	// function wpajax_widget_setup() {
-	// 	register_sidebar( array(
-	// 		'name'          => __( 'Sidebar Widgets', 'wpajax' ),
-	// 		'id'            => 'sidebar-primary',
-	// 		'before_widget' => '<div id="%1$s" class="widget %2$s">',
-	// 		'after_widget'  => '</div>',
-	// 		'before_title'  => '<h3 class="widget-title">',
-	// 		'after_title'   => '</h3>',
-	// 	) );
-	// }
-	// add_action( 'widgets_init', 'wpajax_widget_setup' );
+	// Widgets //
+	function ngwp_widget_setup() {
+		register_sidebar( array(
+			'name'          => __( 'Footer Widgets', 'ngwp' ),
+			'id'            => 'footer-widgets',
+			'before_widget' => '<div id="%1$s" class="widget %2$s">',
+			'after_widget'  => '</div>',
+			'before_title'  => '<h3 class="widget-title">',
+			'after_title'   => '</h3>',
+		) );
+	}
+	add_action( 'widgets_init', 'ngwp_widget_setup' );
 
 	// add custom css to style inside the tinyMCE editor
 	function add_editor_styles() {

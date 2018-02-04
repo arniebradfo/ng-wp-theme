@@ -1,7 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { IWpComment, IWpPost } from 'app/interfaces/wp-rest-types';
 import { WpRestService } from 'app/services/wp-rest.service';
-import { log } from 'util';
 
 @Component({
   selector: 'ngwp-comment-form',

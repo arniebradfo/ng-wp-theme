@@ -21,17 +21,19 @@ This project will play nice with the Angular CLI.
 Pull requests always welcome
 
 ## TODOs:
-- comment submission
-- widgets
-    - search
 - shortcodes
+- put sticky posts first
+- password protected stuff ??
+- oembed
+
 
 ### TODOs: less important
-- put sticky posts first
 - multi page post pagination
 - child page routing
 - use date and time formatting from options obj:
     - map [Anuglar date pipe](https://angular.io/api/common/DatePipe) to [php date formatting](https://codex.wordpress.org/Formatting_Date_and_Time)
+- [widgets](https://wordpress.org/plugins/wp-rest-api-sidebars/)
+    - [custom templates](https://wordpress.stackexchange.com/questions/97411/code-for-recent-posts-widget)
 
 ### Routing:
 - ROUTES TO POST/PAGE
@@ -49,6 +51,7 @@ Pull requests always welcome
     - `/page/{page-number}/?s={search-term}` 👍
 - BACKEND
     - `/wp-admin/*` 👍
-- password protected stuff ??
-- change tag and category base
-- change permalink file
+- TODOs:
+    - password protected stuff ??
+    - change tag and category base
+    - change permalink file
