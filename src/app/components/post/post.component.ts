@@ -55,10 +55,12 @@ export class PostComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    const params = this.activatedRoute.snapshot.params;
-    this.commentsPageNumber = +params['commentsPageNumber'] || 1;
-    const slug = params['slug'];
-    this.getPost(slug);
+    // const params = this.activatedRoute.snapshot.params;
+    this.activatedRoute.params.forEach(params => {
+      this.commentsPageNumber = +params['commentsPageNumber'] || 1;
+      const slug = params['slug'];
+      this.getPost(slug);
+    });
   }
 
   ngOnDestroy() {

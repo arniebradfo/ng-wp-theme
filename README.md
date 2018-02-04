@@ -24,7 +24,7 @@ Pull requests always welcome
 - shortcodes
 - put sticky posts first
 - password protected stuff ??
-- oembed
+- oembed?
 
 
 ### TODOs: less important

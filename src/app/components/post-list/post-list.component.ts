@@ -27,20 +27,21 @@ export class PostListComponent implements OnInit {
 
   ngOnInit() {
 
-    const params = this.activatedRoute.snapshot.params;
-    this.pageNumber = +params['pageNumber'] || 1;
-    let type: 'tag' | 'category' | 'author' | 'search' | undefined = params['type'];
-    let slug: string | undefined = params['slug'];
+    // const params = this.activatedRoute.snapshot.params;
+    this.activatedRoute.params.forEach(params => {
 
-    if (type != null && slug != null) this.routerPrefix = `/${type}/${slug}`;
+      this.pageNumber = +params['pageNumber'] || 1;
+      let type: 'tag' | 'category' | 'author' | 'search' | undefined = params['type'];
+      let slug: string | undefined = params['slug'];
 
-    this.activatedRoute.queryParams.forEach((queryParams: Params) => {
+      if (type != null && slug != null) this.routerPrefix = `/${type}/${slug}`;
 
-      this.queryParams = queryParams;
+      // this.activatedRoute.queryParams.forEach((queryParams: Params) => {});
+      this.queryParams = this.activatedRoute.snapshot.queryParams;
 
-      if (queryParams.s != null) {
+      if (this.queryParams.s != null) {
         type = 'search';
-        slug = queryParams.s;
+        slug = this.queryParams.s;
       }
 
       Promise.all([
@@ -61,7 +62,6 @@ export class PostListComponent implements OnInit {
       }, err => this.error = err);
 
     });
-
   }
 
 }
