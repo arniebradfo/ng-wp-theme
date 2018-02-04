@@ -27,43 +27,38 @@ export class PostListComponent implements OnInit {
 
   ngOnInit() {
 
-    // console.log(this.activatedRoute);
+    const params = this.activatedRoute.snapshot.params;
+    this.pageNumber = +params['pageNumber'] || 1;
+    let type: 'tag' | 'category' | 'author' | 'search' | undefined = params['type'];
+    let slug: string | undefined = params['slug'];
 
-    this.activatedRoute.params.forEach((params: Params) => {
+    if (type != null && slug != null) this.routerPrefix = `/${type}/${slug}`;
 
-      this.pageNumber = +params['pageNumber'] || 1;
-      let type: 'tag' | 'category' | 'author' | 'search' | undefined = params['type'];
-      let slug: string | undefined = params['slug'];
+    this.activatedRoute.queryParams.forEach((queryParams: Params) => {
 
-      if (type != null && slug != null) this.routerPrefix = `/${type}/${slug}`;
+      this.queryParams = queryParams;
 
-      this.activatedRoute.queryParams.forEach((queryParams: Params) => {
+      if (queryParams.s != null) {
+        type = 'search';
+        slug = queryParams.s;
+      }
 
-        this.queryParams = queryParams;
+      Promise.all([
+        this.wpRestService.getPosts(type, slug),
+        this.wpRestService.options
+      ]).then(res => {
 
-        if (queryParams.s != null) {
-          type = 'search';
-          slug = queryParams.s;
-        }
+        const posts = res[0];
+        const options = res[1];
 
-        Promise.all([
-          this.wpRestService.getPosts(type, slug),
-          this.wpRestService.options
-        ]).then(res => {
+        this.postsPerPage = options.reading.posts_per_page;
+        this.pageCount = Array(Math.ceil(posts.length / this.postsPerPage)).fill(0);
 
-          const posts = res[0];
-          const options = res[1];
+        const lowerIndex = this.postsPerPage * (this.pageNumber - 1);
+        const upperIndex = this.postsPerPage * this.pageNumber;
+        this.posts = posts.slice(lowerIndex, upperIndex);
 
-          this.postsPerPage = options.reading.posts_per_page;
-          this.pageCount = Array(Math.ceil(posts.length / this.postsPerPage)).fill(0);
-
-          const lowerIndex = this.postsPerPage * (this.pageNumber - 1);
-          const upperIndex = this.postsPerPage * this.pageNumber;
-          this.posts = posts.slice(lowerIndex, upperIndex);
-
-        }, err => this.error = err);
-
-      });
+      }, err => this.error = err);
 
     });
 

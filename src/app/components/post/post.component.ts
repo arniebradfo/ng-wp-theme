@@ -28,7 +28,7 @@ import { COMPONENTREGISTRY } from 'app/app-component-registry';
 export class PostComponent implements OnInit, OnDestroy {
 
 
-  post: IWpPage; // : IPost;
+  post: IWpPage | IWpPost;
   comments: IWpCommentExtended[];
   allComments: IWpCommentExtended[];
   error: any;
@@ -55,11 +55,10 @@ export class PostComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.activatedRoute.params.forEach((params: Params) => {
-      this.commentsPageNumber = +params['commentsPageNumber'] || 1;
-      const slug = params['slug'];
-      this.getPost(slug);
-    });
+    const params = this.activatedRoute.snapshot.params;
+    this.commentsPageNumber = +params['commentsPageNumber'] || 1;
+    const slug = params['slug'];
+    this.getPost(slug);
   }
 
   ngOnDestroy() {
@@ -67,7 +66,6 @@ export class PostComponent implements OnInit, OnDestroy {
   }
 
   public openCommentReply(comment: IWpCommentExtended): void {
-    // this.wpRestService.postComment(comment);
     this.closeAllCommentForms();
     comment.formOpen = true;
   }
