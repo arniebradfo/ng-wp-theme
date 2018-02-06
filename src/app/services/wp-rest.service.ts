@@ -67,7 +67,6 @@ export class WpRestService {
   public refreshPosts(): void {
     this.posts = this.requestType('posts');
     this.posts = Promise.all([this.posts, this._mediaById, this._tagsById, this._categoriesById, this._usersById]).then(res => {
-      // TODO: reorder so sticky posts are at the top
       const posts = res[0];
       const mediaById = res[1];
       const tagsById = res[2];
@@ -82,10 +81,22 @@ export class WpRestService {
         post.featured_media_ref = mediaById[post.featured_media];
         post = this.tryConvertingDates(post);
       });
+
+      // put sticky posts first in the array
+      let stickyCount = 0;
+      posts.forEach((post, i) => {
+        if (post.sticky) {
+          posts.splice(i, 1);
+          posts.splice(stickyCount, 0, post);
+          stickyCount++;
+         }
+      });
+
       return posts;
     });
     this._postsById = <Promise<IWpPost[]>>this.orderById(this.posts);
   }
+
   public refreshPages(): void {
     this.pages = this.requestType('pages');
     this.pages = Promise.all([this.pages, this._mediaById, this._usersById]).then(res => {
@@ -101,18 +112,22 @@ export class WpRestService {
     });
     this._pagesById = <Promise<IWpPage[]>>this.orderById(this.pages);
   }
+
   public refreshTags(): void {
     this.tags = this.requestType('tags');
     this._tagsById = <Promise<IWpTaxonomy[]>>this.orderById(this.tags);
   }
+
   public refreshCategories(): void {
     this.categories = this.requestType('categories');
     this._categoriesById = <Promise<IWpTaxonomy[]>>this.orderById(this.categories);
   }
+
   public refreshUsers(): void {
     this.users = this.requestType('users');
     this._usersById = <Promise<IWpUser[]>>this.orderById(this.users);
   }
+
   public refreshMedia(): void {
     this.media = this.requestType('media');
     this.media = Promise.all([this.media, this._usersById]).then(res => {
@@ -127,6 +142,7 @@ export class WpRestService {
     this._mediaById = <Promise<IWpMedia[]>>this.orderById(this.media);
   }
 
+
   private orderById(promise: Promise<IWpId[]>): Promise<IWpId[]> {
     return promise.then(items => {
       const itemsById: (IWpId | undefined)[] = [];
@@ -134,6 +150,7 @@ export class WpRestService {
       return itemsById;
     });
   }
+
 
   public requestType(type: string): Promise<any> {
     let store = [];
@@ -164,6 +181,7 @@ export class WpRestService {
     });
   }
 
+
   private tryConvertingDates<T>(obj: T): T {
     const item: any = obj;
     if (item.date) item.date = new Date(item.date);
@@ -172,6 +190,7 @@ export class WpRestService {
     if (item.modified_gmt) item.modified_gmt = new Date(item.modified_gmt);
     return item;
   }
+
 
   public getPostOrPage(slug: string): Promise<IWpPage | undefined> {
     return Promise.all([this.posts, this.pages]).then(res => {
@@ -256,6 +275,7 @@ export class WpRestService {
 
   }
 
+
   private checkForMenuApiErr(err: Response | any): string | any {
     if (err._body && err._body.match(/^[\{\{]/i)) {
       const errJson = err.json();
@@ -268,6 +288,7 @@ export class WpRestService {
     return err;
   }
 
+
   public getMenu(name: string): Observable<IWpMenuItem[]> {
     return this.http
       .get(this._wpMenus + `menu-locations/${name}`)
@@ -277,6 +298,7 @@ export class WpRestService {
         return Observable.throw(this.checkForMenuApiErr(err));
       });
   }
+
 
   public refreshOptions(): void {
     this.options = this.http
@@ -289,6 +311,7 @@ export class WpRestService {
       .toPromise();
     this.options.then(options => console.log('options', options));
   }
+
 
   public getComments(post: IWpPage): Promise<IWpComment[]> {
     // maybe save the comments somehow?
@@ -313,6 +336,7 @@ export class WpRestService {
       return comments;
     });
   }
+
 
   public postComment(newComment: {
     author_email: string;

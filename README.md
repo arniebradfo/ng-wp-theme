@@ -21,13 +21,15 @@ This project will play nice with the Angular CLI.
 Pull requests always welcome
 
 ## TODOs:
-- shortcodes
-- put sticky posts first
 - password protected stuff ??
-- oembed?
+- shortcodes
+- refactor
+- comment
+- readme
 
 
 ### TODOs: less important
+- [oembed?](https://codex.wordpress.org/Embeds)
 - multi page post pagination
 - child page routing
 - use date and time formatting from options obj:
