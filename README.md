@@ -21,14 +21,15 @@ This project will play nice with the Angular CLI.
 Pull requests always welcome
 
 ## TODOs:
-- password protected stuff ??
 - shortcodes
 - refactor
+    - commments into wprestservice
 - comment
 - readme
 
 
 ### TODOs: less important
+- what to do when network fails?
 - [oembed?](https://codex.wordpress.org/Embeds)
 - multi page post pagination
 - child page routing

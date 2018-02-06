@@ -6,10 +6,18 @@
 
   <div #content [innerHTML]="postContent"></div>
 
+  <form *ngIf="showPasswordForm" #passwordForm="ngForm" (ngSubmit)="onSubmit()">
+    <h4>This post is password protected</h4>
+    <input type="password" [(ngModel)]="password" name="password" placeholder="password" required/>
+    <button type="submit" [disabled]="!passwordForm.form.valid">Submit</button>
+    {{errorMessage}}
+    <hr/>
+  </form>
 
   <ngwp-comment-form *ngIf="rootCommentFormOpen" [post]="post"></ngwp-comment-form>
 
   <ol id="comments">
+    <hr/>
     <ng-template #recursiveList let-comments>
       <li *ngFor="let comment of comments">
         <h6>{{comment.author_name}} at {{comment.date | date: 'MMM d, y, h:mm a' }}</h6>

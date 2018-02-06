@@ -8,7 +8,7 @@ import 'rxjs/add/operator/toPromise';
 
 
 import { environment } from '../../environments/environment';
-import { IWpMenuItem, IWpPost, IWpPage, IWpTaxonomy, IWpUser, IWpComment, IWpOptions, IWpId, IWpMedia } from '../interfaces/wp-rest-types';
+import { IWpMenuItem, IWpPost, IWpPage, IWpTaxonomy, IWpUser, IWpComment, IWpOptions, IWpId, IWpMedia, IWpError } from '../interfaces/wp-rest-types';
 
 @Injectable()
 export class WpRestService {
@@ -89,7 +89,7 @@ export class WpRestService {
           posts.splice(i, 1);
           posts.splice(stickyCount, 0, post);
           stickyCount++;
-         }
+        }
       });
 
       return posts;
@@ -192,13 +192,35 @@ export class WpRestService {
   }
 
 
-  public getPostOrPage(slug: string): Promise<IWpPage | undefined> {
+  public getPostOrPage(slug: string): Promise<IWpPage | IWpPost | undefined> {
+    // this.getPasswordProtected(1168, 'enter');
     return Promise.all([this.posts, this.pages]).then(res => {
       for (let i = 0; i < res.length; i++)
         for (let j = 0; j < res[i].length; j++)
           if (slug === res[i][j].slug)
             return res[i][j];
       return undefined;
+    });
+  }
+
+  public getPasswordProtected(id: number, password: string): Promise<IWpPage | IWpPost | false> {
+    return new Promise<IWpPage | IWpPost | false>((resolve, reject) => {
+      this._postsById.then(postsById => {
+        const post = postsById[id];
+        this.http
+          .get(post._links.self[0].href, { params: { password: password } })
+          .map((res: Response) => res.json())
+          .catch((err: Response) => {
+            const wpErr: IWpError = err.json();
+            reject(wpErr);
+            return Observable.throw(wpErr);
+          })
+          .forEach(postRes => {
+            post.content = postRes.content;
+            post.excerpt = postRes.excerpt;
+            resolve(post);
+          });
+      });
     });
   }
 
@@ -313,12 +335,14 @@ export class WpRestService {
   }
 
 
-  public getComments(post: IWpPage): Promise<IWpComment[]> {
+  public getComments(post: IWpPage, password?: string): Promise<IWpComment[]> {
     // maybe save the comments somehow?
     // console.log(post._links.replies[0].href);
 
+    const requestObj = password ? { params: { password: password } } : undefined;
+
     const commentsRequest: Promise<IWpComment[]> = this.http
-      .get(post._links.replies[0].href + '&per_page=100')
+      .get(post._links.replies[0].href + '&per_page=100', requestObj)
       .map((res: Response) => res.json())
       .catch((err: Response | any) => {
         console.error(err);

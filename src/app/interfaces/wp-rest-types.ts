@@ -218,6 +218,12 @@ export interface IWpOptions {
     nonce: string;
 }
 
+export interface IWpError {
+    code: string;
+    data: { status: number };
+    message: string;
+}
+
 interface IWpDetailsImg {
     width: number;
     height: number;

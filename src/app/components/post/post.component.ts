@@ -13,7 +13,7 @@ import {
   OnDestroy
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { IWpPost, IWpPage, IWpComment } from 'app/interfaces/wp-rest-types';
+import { IWpPost, IWpPage, IWpComment, IWpError } from 'app/interfaces/wp-rest-types';
 import { WpRestService } from 'app/services/wp-rest.service';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { COMPONENTREGISTRY } from 'app/app-component-registry';
@@ -38,6 +38,9 @@ export class PostComponent implements OnInit, OnDestroy {
   commentsPageCount: number[];
   commentsPageNumber: number;
   rootCommentFormOpen: boolean = true;
+  password: string;
+  showPasswordForm: boolean = false;
+  errorMessage: string;
 
   destroyDynamicComponents: (() => void)[] = [];
 
@@ -85,42 +88,59 @@ export class PostComponent implements OnInit, OnDestroy {
   public getPost(slug) {
     this.wpRestService
       .getPostOrPage(slug)
-      .then((post) => {
+      .then(post => {
         if (!post) return;
 
         this.post = post;
-        this.postContent = this.domSanitizer.bypassSecurityTrustHtml(this.post.content.rendered);
-
-        Promise.all([
-          this.wpRestService.getComments(this.post),
-          this.wpRestService.options
-        ]).then(res => {
-          this.allComments = res[0];
-          const comments = this.generateCommentHeiarchy(this.allComments);
-
-          const options = res[1];
-          this.commentsPerPage = options.reading.posts_per_page;
-          this.commentsPageCount = Array(Math.ceil(comments.length / this.commentsPerPage)).fill(0);
-
-          const lowerIndex = this.commentsPerPage * (this.commentsPageNumber - 1);
-          const upperIndex = this.commentsPerPage * this.commentsPageNumber;
-          this.comments = comments.slice(lowerIndex, upperIndex);
-
-        });
+        console.log('current post', this.post);
 
         if (post.type === 'post')
           this.wpRestService.getAdjcentPosts(slug)
             .then(posts => this.adjcentPosts = posts);
 
-        window.setTimeout(() => { this.renderComponents(); }, 0);
+        if (this.post.content.protected)
+          this.showPasswordForm = true;
+        else
+          this.getPostContent();
 
-      }, (error) => {
-        this.error = error;
       });
   }
 
+  public onSubmit(): void {
+    this.wpRestService.getPasswordProtected(this.post.id, this.password)
+      .then(post => {
+        this.showPasswordForm = false;
+        this.getPostContent();
+      }, (err: IWpError) => {
+        this.errorMessage = err.message;
+        // TODO: show try again message
+      });
+  }
+
+  public getPostContent(): void {
+
+    this.postContent = this.domSanitizer.bypassSecurityTrustHtml(this.post.content.rendered);
+    window.setTimeout(() => { this.renderComponents(); }, 0);
+
+    Promise.all([
+      this.wpRestService.getComments(this.post, this.password),
+      this.wpRestService.options
+    ]).then(res => {
+      this.allComments = res[0];
+      const comments = this.generateCommentHeiarchy(this.allComments);
+
+      const options = res[1];
+      this.commentsPerPage = options.reading.posts_per_page;
+      this.commentsPageCount = Array(Math.ceil(comments.length / this.commentsPerPage)).fill(0);
+
+      const lowerIndex = this.commentsPerPage * (this.commentsPageNumber - 1);
+      const upperIndex = this.commentsPerPage * this.commentsPageNumber;
+      this.comments = comments.slice(lowerIndex, upperIndex);
+    });
+  }
+
   private generateCommentHeiarchy(comments: IWpCommentExtended[]): IWpCommentExtended[] {
-    // TODO: test this more
+    // TODO: test this more, move to rest service
     comments.forEach(comment => comment.children = []);
     comments.forEach(comment => {
       if (comment.parent === 0) return;
