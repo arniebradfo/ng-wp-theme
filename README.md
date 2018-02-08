@@ -21,7 +21,9 @@ This project will play nice with the Angular CLI.
 Pull requests always welcome
 
 ## TODOs:
+- upgrade angular and all packages
 - shortcodes
+- test in aot
 - refactor
     - commments into wprestservice
 - comment

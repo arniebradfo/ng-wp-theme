@@ -1,14 +1,23 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, RequestOptionsArgs, Headers } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
+import { environment } from '../../environments/environment';
+import {
+  IWpMenuItem,
+  IWpPost,
+  IWpPage,
+  IWpTaxonomy,
+  IWpUser,
+  IWpComment,
+  IWpOptions,
+  IWpId,
+  IWpMedia,
+  IWpError
+} from '../interfaces/wp-rest-types';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/toPromise';
-
-
-import { environment } from '../../environments/environment';
-import { IWpMenuItem, IWpPost, IWpPage, IWpTaxonomy, IWpUser, IWpComment, IWpOptions, IWpId, IWpMedia, IWpError } from '../interfaces/wp-rest-types';
 
 @Injectable()
 export class WpRestService {
@@ -303,7 +312,7 @@ export class WpRestService {
       const errJson = err.json();
       if (errJson.code && errJson.code === `rest_no_route`) {
         return errJson.message + `
-            The menu API requires the 'WP API Menus' plugin to be installed and activated. 
+            The menu API requires the 'WP API Menus' plugin to be installed and activated.
             https://wordpress.org/plugins/wp-api-menus/`;
       }
     }
