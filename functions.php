@@ -44,44 +44,32 @@
 	}
 	add_action( 'after_setup_theme', 'ngwp_theme_setup' );
 
-	// Widgets //
-	function ngwp_widget_setup() {
-		register_sidebar( array(
-			'name'          => __( 'Footer Widgets', 'ngwp' ),
-			'id'            => 'footer-widgets',
-			'before_widget' => '<div id="%1$s" class="widget %2$s">',
-			'after_widget'  => '</div>',
-			'before_title'  => '<h3 class="widget-title">',
-			'after_title'   => '</h3>',
-		) );
-	}
-	add_action( 'widgets_init', 'ngwp_widget_setup' );
-
 	// add custom css to style inside the tinyMCE editor
 	function add_editor_styles() {
 		add_editor_style(); // path defaults to editor-style.css
 	}
 	add_action( 'admin_init', 'add_editor_styles' );
 
+	// NG-SHORTCODES //
+	// transform Shortcodes into angular Tags
     function shortcode_func( $atts, $content=null, $tag='' ) {
-        // $output = '<div data-component="'.$tag.'"';   // opening div
-		$output = '<'.$tag.' data-component="'.$tag.'"';   // opening tag
+		$output = '<'.$tag.' ';               // opening tag
 		foreach($atts as $att => $val)
-            $output .= $att.'="'.$val.'" ';           // echo all attributes from the shorcode
-        $output .= '>';                               // close the opening tag
-        $output .= do_shortcode($content);            // content
-		$output .= '</'.$tag.'>';                     // closing tag
-		// $output .= '</div>';                          // closing div
+            $output .= $att.'="'.$val.'" ';   // echo all attributes from the shorcode
+        $output .= '>';                       // close the opening tag
+        $output .= do_shortcode($content);    // content
+		$output .= '</'.$tag.'>';             // closing tag
 		return $output;
     }
     add_shortcode( 'ngwp-example', 'shortcode_func' );
     add_shortcode( 'ngwp-example-2', 'shortcode_func' );
-    // add_shortcode( 'any-tag-name-you-want', 'shortcode_func' );
+	// add_shortcode( 'any-tag-name-you-want', 'shortcode_func' );
 
+	// wpautop tries to add <p> tags around EVERYTHING. 
 	remove_filter('the_content', 'wpautop');
 	remove_filter('the_excerpt', 'wpautop');
-
 	
+	// Ng OPTIONS //
 	// register route to get options needed for Angular
 	add_action( 'rest_api_init', function () {
 		register_rest_route( 'ngwp/v2', '/options', array(
@@ -91,7 +79,6 @@
 			)
 		) );
 	});
-
 	function ngwp_get_wp_options( WP_REST_Request $request ) {
 
 		// WP SETTINGS OPTIONS //
@@ -142,6 +129,21 @@
 			// 'nonce' => wp_create_nonce( 'wp_rest' )
 		));
 	}
-	
 	add_filter('rest_allow_anonymous_comments', '__return_true');
+
+	// WIDGETS //
+	// can't do widgets right now
+	// function ngwp_widget_setup() {
+	// 	register_sidebar( array(
+	// 		'name'          => __( 'Footer Widgets', 'ngwp' ),
+	// 		'id'            => 'footer-widgets',
+	// 		'before_widget' => '<div id="%1$s" class="widget %2$s">',
+	// 		'after_widget'  => '</div>',
+	// 		'before_title'  => '<h3 class="widget-title">',
+	// 		'after_title'   => '</h3>',
+	// 	) );
+	// }
+	// add_action( 'widgets_init', 'ngwp_widget_setup' );
+
+// stay cool y'all! 
 ?>

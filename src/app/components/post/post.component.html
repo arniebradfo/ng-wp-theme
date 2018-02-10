@@ -4,7 +4,8 @@
     {{ post.title.rendered }}
   </h1>
 
-  <div #content [innerHTML]="postContent"></div>
+  <!-- <div #content [innerHTML]="postContent"></div> -->
+  <ngwp-content [content]="postContent" ></ngwp-content>
 
   <form *ngIf="showPasswordForm" #passwordForm="ngForm" (ngSubmit)="onSubmit()">
     <h4>This post is password protected</h4>

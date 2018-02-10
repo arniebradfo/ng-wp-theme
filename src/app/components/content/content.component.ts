@@ -4,10 +4,10 @@ import {
   Output, ViewEncapsulation
 } from '@angular/core';
 
-// import { Title } from '@angular/platform-browser';
 import { EmbeddableComponentsService } from '../../shortcodes/shortcodes.module';
 
 // based on: https://github.com/wardbell/ng-dynamic-app/blob/master/src/app/docviewer/docviewer.component.ts
+// video: https://www.youtube.com/watch?v=__H65AsA_bE&feature=youtu.be&t=2h14m13s
 @Component({
   selector: 'ngwp-content',
   template: '<span></span>'
@@ -26,7 +26,6 @@ export class ContentComponent implements DoCheck, OnDestroy {
     elementRef: ElementRef,
     embeddableComponentsService: EmbeddableComponentsService,
     private injector: Injector,
-    // private titleService: Title
   ) {
     this.contentElement = elementRef.nativeElement;
 
@@ -53,7 +52,6 @@ export class ContentComponent implements DoCheck, OnDestroy {
     this.contentElement.innerHTML = content || '';
 
     if (!content) return;
-    // this.addTitle();
     this.createEmbeddedComponentInstances();
   }
 
@@ -68,16 +66,6 @@ export class ContentComponent implements DoCheck, OnDestroy {
   }
 
   //// helpers ////
-
-  /** Add the doc's first <h1>'s content as the browser tab (and button) title */
-  // private addTitle() {
-  //   let title = '';
-  //   const titleEl = this.contentElement.querySelector('h1');
-  //   if (titleEl) {
-  //     title = (titleEl.innerText || titleEl.textContent).trim();
-  //   }
-  //   this.titleService.setTitle(title ? `Ng Dynamic - ${title}` : 'Ng Dynamic');
-  // }
 
   /**
    * Create the map of EmbeddedComponentFactories, keyed by their selectors.
@@ -104,8 +92,6 @@ export class ContentComponent implements DoCheck, OnDestroy {
   private createEmbeddedComponentInstances() {
     this.embeddableComponentFactories.forEach(
       (componentFactory, selector) => {
-
-      console.log(selector);
 
       // All current doc elements with this embedded component's selector
       const embeddedComponentElements =

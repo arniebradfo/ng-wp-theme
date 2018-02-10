@@ -119,8 +119,10 @@ export class PostComponent implements OnInit, OnDestroy {
 
   public getPostContent(): void {
 
-    this.postContent = this.domSanitizer.bypassSecurityTrustHtml(this.post.content.rendered);
-    window.setTimeout(() => { this.renderComponents(); }, 0);
+    this.postContent = this.post.content.rendered;
+    console.log(this.postContent)
+    // this.postContent = this.domSanitizer.bypassSecurityTrustHtml(this.post.content.rendered);
+    // window.setTimeout(() => { this.renderComponents(); }, 0);
 
     Promise.all([
       this.wpRestService.getComments(this.post, this.password),
@@ -152,52 +154,52 @@ export class PostComponent implements OnInit, OnDestroy {
     return comments;
   }
 
-  private renderComponents(): void {
+  // private renderComponents(): void {
 
-    // https://www.youtube.com/watch?v=__H65AsA_bE&feature=youtu.be&t=2h14m13s
-    const componentSet = this.content.nativeElement.querySelectorAll('[data-component]');
+  //   // https://www.youtube.com/watch?v=__H65AsA_bE&feature=youtu.be&t=2h14m13s
+  //   const componentSet = this.content.nativeElement.querySelectorAll('[data-component]');
 
-    console.log(this.content.nativeElement);
-    console.log(componentSet);
+  //   console.log(this.content.nativeElement);
+  //   console.log(componentSet);
 
-    // TODO: need to find the highest first? recurslively? test with nested elements
-    for (let i = 0; i < componentSet.length; i++) {
+  //   // TODO: need to find the highest first? recurslively? test with nested elements
+  //   for (let i = 0; i < componentSet.length; i++) {
 
-      // get the un-angular element and make it an angular component
-      const node: Node = componentSet[i];
-      const component = COMPONENTREGISTRY.getTypeFor(componentSet[0].dataset.component);
-      const componentFactory = this.componentFactoryResolver.resolveComponentFactory(component);
-      const componentRef = componentFactory.create(this.injector);
-      this.applicationRef.attachView(componentRef.hostView);
-      this.destroyDynamicComponents.push(() => {
-        this.applicationRef.detachView(componentRef.hostView);
-        componentRef.destroy();
-      });
+  //     // get the un-angular element and make it an angular component
+  //     const node: Node = componentSet[i];
+  //     const component = COMPONENTREGISTRY.getTypeFor(componentSet[0].dataset.component);
+  //     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(component);
+  //     const componentRef = componentFactory.create(this.injector);
+  //     this.applicationRef.attachView(componentRef.hostView);
+  //     this.destroyDynamicComponents.push(() => {
+  //       this.applicationRef.detachView(componentRef.hostView);
+  //       componentRef.destroy();
+  //     });
 
-      // insert the Angualr component
-      const componentRoot: HTMLElement = (componentRef.hostView as EmbeddedViewRef<any>).rootNodes[0];
-      this.renderer.insertBefore(node.parentNode, componentRoot, node);
+  //     // insert the Angualr component
+  //     const componentRoot: HTMLElement = (componentRef.hostView as EmbeddedViewRef<any>).rootNodes[0];
+  //     this.renderer.insertBefore(node.parentNode, componentRoot, node);
 
-      // add attributes to the html element and properties to the component class
-      for (let j = 0; j < node.attributes.length; j++) {
-        const attr = node.attributes.item(j);
-        (<any>componentRef.instance)[attr.name] = attr.value; // maybe use eval()
-        this.renderer.setAttribute(componentRoot, attr.name, attr.value);
-      }
+  //     // add attributes to the html element and properties to the component class
+  //     for (let j = 0; j < node.attributes.length; j++) {
+  //       const attr = node.attributes.item(j);
+  //       (<any>componentRef.instance)[attr.name] = attr.value; // maybe use eval()
+  //       this.renderer.setAttribute(componentRoot, attr.name, attr.value);
+  //     }
 
-      // add all the children to the new component element
-      while (node.childNodes.length > 0) {
-        // TODO: write an inteface for this
-        this.renderer.appendChild(
-          (<any>componentRef.instance).htmlInsertionRef.nativeElement.parentNode,
-          node.childNodes[0]
-        );
-      }
+  //     // add all the children to the new component element
+  //     while (node.childNodes.length > 0) {
+  //       // TODO: write an inteface for this
+  //       this.renderer.appendChild(
+  //         (<any>componentRef.instance).htmlInsertionRef.nativeElement.parentNode,
+  //         node.childNodes[0]
+  //       );
+  //     }
 
-      // remove the old component
-      this.renderer.removeChild(node.parentNode, node);
-    }
-  }
+  //     // remove the old component
+  //     this.renderer.removeChild(node.parentNode, node);
+  //   }
+  // }
 
 }
 
