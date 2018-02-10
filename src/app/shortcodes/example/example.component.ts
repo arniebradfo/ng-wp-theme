@@ -1,28 +1,30 @@
-import { Component, OnInit, Input, HostBinding, ViewContainerRef, ViewChild, ElementRef } from '@angular/core';
-import { registerComponent } from 'app/app-component-registry';
+import { Component, OnInit} from '@angular/core';
 
-@registerComponent
 @Component({
   selector: 'ngwp-example',
-  templateUrl: './example.component.html'
+  template: `
+    <ng-content></ng-content>
+    <p>this content is part of the Angular template</p>
+  `
 })
 export class ExampleComponent implements OnInit {
 
-  @Input() input: string;
-  @ViewChild('content', {read: ElementRef}) htmlInsertionRef: ElementRef;
+  input: string;
 
   constructor() { }
 
   ngOnInit() {
-    console.log(this);
+    console.log(this.input);
   }
 
 }
 
-@registerComponent
 @Component({
   selector: 'ngwp-example-2',
-  templateUrl: './example.component.html'
+  template: `
+    <ng-content></ng-content>
+    <p>this is another example template</p>
+  `
 })
 export class ExampleTwoComponent extends ExampleComponent {}
 

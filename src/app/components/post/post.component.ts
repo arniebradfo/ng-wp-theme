@@ -1,7 +1,6 @@
 import {
   Component,
   OnInit,
-  ViewChild,
   ComponentFactoryResolver,
   ViewContainerRef,
   AfterViewInit,
@@ -16,17 +15,12 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { IWpPost, IWpPage, IWpComment, IWpError } from 'app/interfaces/wp-rest-types';
 import { WpRestService } from 'app/services/wp-rest.service';
 import { Router, ActivatedRoute, Params } from '@angular/router';
-import { COMPONENTREGISTRY } from 'app/app-component-registry';
-
-// insert component anywhere:
-// https://stackoverflow.com/a/41950786/5648839
 
 @Component({
   selector: 'ngwp-post',
   templateUrl: './post.component.html',
 })
-export class PostComponent implements OnInit, OnDestroy {
-
+export class PostComponent implements OnInit {
 
   post: IWpPage | IWpPost;
   comments: IWpCommentExtended[];
@@ -41,11 +35,6 @@ export class PostComponent implements OnInit, OnDestroy {
   password: string;
   showPasswordForm: boolean = false;
   errorMessage: string;
-
-  destroyDynamicComponents: (() => void)[] = [];
-
-  @ViewChild('content', { read: ViewContainerRef }) contentViewContainerRef: ViewContainerRef;
-  @ViewChild('content', { read: ElementRef }) content: ElementRef;
 
   constructor(
     private wpRestService: WpRestService,
@@ -64,10 +53,6 @@ export class PostComponent implements OnInit, OnDestroy {
       const slug = params['slug'];
       this.getPost(slug);
     });
-  }
-
-  ngOnDestroy() {
-    this.destroyDynamicComponents.forEach(destroyDynamicComponent => destroyDynamicComponent());
   }
 
   public openCommentReply(comment: IWpCommentExtended): void {
@@ -92,7 +77,7 @@ export class PostComponent implements OnInit, OnDestroy {
         if (!post) return;
 
         this.post = post;
-        // console.log('current post', this.post);
+        // console.log('current post', this.post); // for debug
 
         if (post.type === 'post')
           this.wpRestService.getAdjcentPosts(slug)
@@ -120,9 +105,6 @@ export class PostComponent implements OnInit, OnDestroy {
   public getPostContent(): void {
 
     this.postContent = this.post.content.rendered;
-    console.log(this.postContent)
-    // this.postContent = this.domSanitizer.bypassSecurityTrustHtml(this.post.content.rendered);
-    // window.setTimeout(() => { this.renderComponents(); }, 0);
 
     Promise.all([
       this.wpRestService.getComments(this.post, this.password),
@@ -153,53 +135,6 @@ export class PostComponent implements OnInit, OnDestroy {
     comments = comments.filter(comment => comment.parent === 0);
     return comments;
   }
-
-  // private renderComponents(): void {
-
-  //   // https://www.youtube.com/watch?v=__H65AsA_bE&feature=youtu.be&t=2h14m13s
-  //   const componentSet = this.content.nativeElement.querySelectorAll('[data-component]');
-
-  //   console.log(this.content.nativeElement);
-  //   console.log(componentSet);
-
-  //   // TODO: need to find the highest first? recurslively? test with nested elements
-  //   for (let i = 0; i < componentSet.length; i++) {
-
-  //     // get the un-angular element and make it an angular component
-  //     const node: Node = componentSet[i];
-  //     const component = COMPONENTREGISTRY.getTypeFor(componentSet[0].dataset.component);
-  //     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(component);
-  //     const componentRef = componentFactory.create(this.injector);
-  //     this.applicationRef.attachView(componentRef.hostView);
-  //     this.destroyDynamicComponents.push(() => {
-  //       this.applicationRef.detachView(componentRef.hostView);
-  //       componentRef.destroy();
-  //     });
-
-  //     // insert the Angualr component
-  //     const componentRoot: HTMLElement = (componentRef.hostView as EmbeddedViewRef<any>).rootNodes[0];
-  //     this.renderer.insertBefore(node.parentNode, componentRoot, node);
-
-  //     // add attributes to the html element and properties to the component class
-  //     for (let j = 0; j < node.attributes.length; j++) {
-  //       const attr = node.attributes.item(j);
-  //       (<any>componentRef.instance)[attr.name] = attr.value; // maybe use eval()
-  //       this.renderer.setAttribute(componentRoot, attr.name, attr.value);
-  //     }
-
-  //     // add all the children to the new component element
-  //     while (node.childNodes.length > 0) {
-  //       // TODO: write an inteface for this
-  //       this.renderer.appendChild(
-  //         (<any>componentRef.instance).htmlInsertionRef.nativeElement.parentNode,
-  //         node.childNodes[0]
-  //       );
-  //     }
-
-  //     // remove the old component
-  //     this.renderer.removeChild(node.parentNode, node);
-  //   }
-  // }
 
 }
 

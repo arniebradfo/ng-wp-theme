@@ -1,6 +1,6 @@
 # NG-WP
 
-A minimal WordPress theme that runs off of an Angular 4 app. 
+A minimal WordPress theme that runs off of an Angular 5 app. 
 
 Originally built for the tutorial http://doppiaeast.com/article/angular-2-wordpress-theme-setup/.
 
@@ -19,14 +19,13 @@ This project will play nice with the Angular CLI.
 ## Contributions
 
 Pull requests always welcome
+- Do not use any css
 
 ## TODOs:
-- upgrade angular and all packages
-- shortcodes
 - test in aot
 - refactor
-    - commments into wprestservice
-- comment
+    - move commments into wprestservice
+- comment on code
 - readme
 
 
