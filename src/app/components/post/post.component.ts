@@ -92,7 +92,7 @@ export class PostComponent implements OnInit, OnDestroy {
         if (!post) return;
 
         this.post = post;
-        console.log('current post', this.post);
+        // console.log('current post', this.post);
 
         if (post.type === 'post')
           this.wpRestService.getAdjcentPosts(slug)
@@ -152,10 +152,15 @@ export class PostComponent implements OnInit, OnDestroy {
     return comments;
   }
 
-  private renderComponents(): any {
+  private renderComponents(): void {
+
+    // https://www.youtube.com/watch?v=__H65AsA_bE&feature=youtu.be&t=2h14m13s
     const componentSet = this.content.nativeElement.querySelectorAll('[data-component]');
 
-    // TODO: need to find the highest first? test with nested elements
+    console.log(this.content.nativeElement);
+    console.log(componentSet);
+
+    // TODO: need to find the highest first? recurslively? test with nested elements
     for (let i = 0; i < componentSet.length; i++) {
 
       // get the un-angular element and make it an angular component

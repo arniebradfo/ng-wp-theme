@@ -9,7 +9,7 @@ import { NgWpComponent } from './ngwp.component';
 import { NavComponent } from './components/nav/nav.component';
 import { PostComponent } from './components/post/post.component';
 import { PostListComponent } from './components/post-list/post-list.component';
-import { ExampleComponent } from './shortcodes/example/example.component';
+import { ExampleComponent, ExampleTwoComponent } from './shortcodes/example/example.component';
 import { CommentFormComponent } from './components/comment-form/comment-form.component';
 import { SearchComponent } from './components/search/search.component';
 
@@ -19,12 +19,10 @@ import { SearchComponent } from './components/search/search.component';
     NavComponent,
     PostComponent,
     PostListComponent,
-    ExampleComponent,
     CommentFormComponent,
-    SearchComponent
-  ],
-  entryComponents: [ // all shortcodes go here
-    ExampleComponent
+    SearchComponent,
+    ExampleTwoComponent,
+    ExampleComponent,
   ],
   imports: [
     BrowserModule,
@@ -36,8 +34,13 @@ import { SearchComponent } from './components/search/search.component';
     WpRestService,
   ],
   bootstrap: [NgWpComponent],
+  entryComponents: [ // all shortcodes go here
+    ExampleTwoComponent,
+    ExampleComponent,
+  ],
   exports: [ // export shortcodes
-    ExampleComponent
+    ExampleTwoComponent,
+    ExampleComponent,
   ]
 })
 export class NgWpModule { }

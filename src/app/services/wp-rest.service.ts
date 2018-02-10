@@ -50,7 +50,7 @@ export class WpRestService {
   constructor(
     private http: Http,
   ) {
-    console.time('WpRestService');
+    // console.time('WpRestService');
 
     // generate all properties.
     this.refreshOptions();
@@ -62,15 +62,15 @@ export class WpRestService {
     this.refreshPosts();
     this.refreshPages();
 
-    Promise.all([
-      this.posts,
-      this.pages,
-      this.media,
-      this.tags,
-      this.categories,
-      this.users,
-      this.options
-    ]).then(res => console.timeEnd('WpRestService'));
+    // Promise.all([
+    //   this.posts,
+    //   this.pages,
+    //   this.media,
+    //   this.tags,
+    //   this.categories,
+    //   this.users,
+    //   this.options
+    // ]).then(res => console.timeEnd('WpRestService'));
   }
 
   public refreshPosts(): void {
@@ -181,7 +181,7 @@ export class WpRestService {
               page++;
               requestPostSet();
             } else {
-              console.log(type, store);
+              // console.log(type, store);
               resolve(store);
             }
           });
@@ -340,7 +340,7 @@ export class WpRestService {
         return Observable.throw(err);
       })
       .toPromise();
-    this.options.then(options => console.log('options', options));
+    // this.options.then(options => console.log('options', options));
   }
 
 

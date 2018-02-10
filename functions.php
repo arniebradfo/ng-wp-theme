@@ -64,15 +64,18 @@
 	add_action( 'admin_init', 'add_editor_styles' );
 
     function shortcode_func( $atts, $content=null, $tag='' ) {
-        $output = '<div data-component="'.$tag.'"';   // opening tag
-        foreach($atts as $att => $val)
+        $output = '<div data-component="'.$tag.'"';   // opening div
+		// $output = '<'.$tag.' data-component="'.$tag.'"';   // opening tag
+		foreach($atts as $att => $val)
             $output .= $att.'="'.$val.'" ';           // echo all attributes from the shorcode
         $output .= '>';                               // close the opening tag
         $output .= do_shortcode($content);            // content
-        $output .= '</div>';                          // closing tag
-        return $output;
+		// $output .= '</'.$tag.'>';                     // closing tag
+		$output .= '</div>';                          // closing div
+		return $output;
     }
     add_shortcode( 'ngwp-example', 'shortcode_func' );
+    add_shortcode( 'ngwp-example-2', 'shortcode_func' );
     // add_shortcode( 'any-tag-name-you-want', 'shortcode_func' );
 
 	remove_filter('the_content', 'wpautop');

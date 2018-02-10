@@ -4,8 +4,7 @@ import { registerComponent } from 'app/app-component-registry';
 @registerComponent
 @Component({
   selector: 'ngwp-example',
-  templateUrl: './example.component.html',
-  styleUrls: ['./example.component.css']
+  templateUrl: './example.component.html'
 })
 export class ExampleComponent implements OnInit {
 
@@ -15,7 +14,15 @@ export class ExampleComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.log(this.input);
+    console.log(this);
   }
 
 }
+
+@registerComponent
+@Component({
+  selector: 'ngwp-example-2',
+  templateUrl: './example.component.html'
+})
+export class ExampleTwoComponent extends ExampleComponent {}
+
