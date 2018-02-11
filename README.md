@@ -41,7 +41,6 @@ This project uses the [Angular CLI](https://github.com/angular/angular-cli).
 6. to build: run `ng build --prod --deploy-url="/wp-content/themes/{THEME_DIRECTORY_NAME}/dist/"`
 
 ## How it works
-
 The basic strategy is to dump the whole WP data base onto the Angular frontend at load time using the [WP REST API](https://developer.wordpress.org/rest-api/). This could have some performance downsides for sites with large numbers of posts or images and could/shold be changed later. After the site loads all its data, it runs lightning fast becasue it does not need to make network requests for post content. Comments and password protected posts are loaded on demand.
 
 ## Supported Routing
@@ -61,6 +60,9 @@ The basic strategy is to dump the whole WP data base onto the Angular frontend a
 - BACKEND
     - `/wp-admin/*` 👍
 
+## Shortcodes
+You can use angular "Embedded" components in post content just like shortcodes. There are some limitations to what those components can do, but it works with AOT compiler so you don't need the Angular JIT complier. Its done the same way the [angular.io](https://angular.io/) documentation is. Here's a [video](https://www.youtube.com/watch?v=__H65AsA_bE&feature=youtu.be&t=2h14m13s) about it and an [example repository](https://github.com/wardbell/ng-dynamic-app).
+
 
 ## Contributions
 Please help if you'd like. 
@@ -76,6 +78,10 @@ Originally built for the tutorial http://doppiaeast.com/article/angular-2-wordpr
 - [Menus for WP REST API](https://wordpress.org/plugins/wp-api-menus/)
 - ["Embeddable" Angular Components](https://github.com/wardbell/ng-dynamic-app) [video](https://www.youtube.com/watch?v=__H65AsA_bE&feature=youtu.be&t=2h14m13s)
 - WP example content: [Theme Unit Test](https://codex.wordpress.org/Theme_Unit_Test)
+- If your hosting your theme repository on github or bitbucket use the [github updater pluin](https://github.com/afragen/github-updater).
+- [Save with Keyboard](https://wordpress.org/themes/save-with-keyboard/) is awesome.
+- [Use svg](https://wordpress.org/themes/svg-support/).
+- Use [vanilla js smooth scroll](https://github.com/cferdinandi/smooth-scroll/) to animate between anchors and other loads.
 
 
 <!-- #### Usage
