@@ -7,7 +7,7 @@
 - configure to not require a wpBase environment var
 - change title tag
 - what to do when network fails?
-- imporove network performance
+- imporove network performance with more, smaller requests returning `Observables`
 - [oembed?](https://codex.wordpress.org/Embeds)
 - routing
   - multi page post pagination

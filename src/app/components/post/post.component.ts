@@ -1,10 +1,9 @@
-import {
-  Component,
-  OnInit,
-} from '@angular/core';
+import { Component, OnInit, } from '@angular/core';
 import { IWpPost, IWpPage, IWpComment, IWpError } from 'app/interfaces/wp-rest-types';
 import { WpRestService } from 'app/services/wp-rest.service';
 import { ActivatedRoute } from '@angular/router';
+
+// displays a post and its comments
 
 @Component({
   selector: 'ngwp-post',
@@ -33,12 +32,13 @@ export class PostComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // const params = this.activatedRoute.snapshot.params;
-    this.activatedRoute.params.forEach(params => {
-      this.commentsPageNumber = +params['commentsPageNumber'] || 1;
-      const slug = params['slug'];
-      this.getPost(slug);
-    });
+    // each time the route updates, update the shown post
+    this.activatedRoute.params
+      .forEach(params => {
+        this.commentsPageNumber = +params['commentsPageNumber'] || 1;
+        const slug = params['slug'];
+        this.getPost(slug);
+      });
   }
 
   public openCommentReply(comment: IWpComment): void {
@@ -53,7 +53,8 @@ export class PostComponent implements OnInit {
 
   public closeAllCommentForms(): void {
     this.rootCommentFormOpen = false;
-    this.allComments.forEach(comment => comment.formOpen = false);
+    this.allComments
+      .forEach(comment => comment.formOpen = false);
   }
 
   public getPost(slug) {
@@ -65,19 +66,20 @@ export class PostComponent implements OnInit {
         this.post = post;
         // console.log('current post', this.post); // for debug
 
+        // if this is a post, not a page, get adjcent posts for routing
         if (post.type === 'post')
           this.wpRestService.getAdjcentPosts(slug)
             .then(posts => this.adjcentPosts = posts);
 
+        // if this is a password protected post, show the password form
         if (this.post.content.protected)
           this.showPasswordForm = true;
         else
           this.getPostContent();
-
       });
   }
 
-  public onSubmit(): void {
+  public onSubmitPassword(): void {
     this.wpRestService.getPasswordProtected(this.post.id, this.password)
       .then(post => {
         this.showPasswordForm = false;
@@ -90,18 +92,22 @@ export class PostComponent implements OnInit {
 
   public getPostContent(): void {
 
+    // set the content and feed it to the ngwp-content renderer.
     this.postContent = this.post.content.rendered;
 
+    // get the comments for the current post from the WpRestService
     Promise.all([
       this.wpRestService.getComments(this.post, this.password),
       this.wpRestService.options
     ]).then(res => {
       const comments = this.allComments = res[0];
-
       const options = res[1];
+
+      // get the number of comment-pages
       this.commentsPerPage = options.reading.posts_per_page;
       this.commentsPageCount = Array(Math.ceil(comments.length / this.commentsPerPage)).fill(0);
 
+      // get the current comment-page's set of comments
       const lowerIndex = this.commentsPerPage * (this.commentsPageNumber - 1);
       const upperIndex = this.commentsPerPage * this.commentsPageNumber;
       this.comments = comments.slice(lowerIndex, upperIndex);

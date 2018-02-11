@@ -12,7 +12,6 @@ export class NgWpComponent implements OnInit {
 
   constructor(
     private wpRestService: WpRestService,
-    // private activatedRoute: ActivatedRoute
   ) { }
 
   ngOnInit(): void {

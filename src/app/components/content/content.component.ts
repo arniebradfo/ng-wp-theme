@@ -7,6 +7,7 @@ import { EmbeddableComponentsService } from '../../shortcodes/shortcodes.module'
 
 // based on: https://github.com/wardbell/ng-dynamic-app/blob/master/src/app/docviewer/docviewer.component.ts
 // video: https://www.youtube.com/watch?v=__H65AsA_bE&feature=youtu.be&t=2h14m13s
+
 @Component({
   selector: 'ngwp-content',
   template: '<span></span>'

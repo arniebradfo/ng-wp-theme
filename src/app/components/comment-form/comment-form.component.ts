@@ -2,6 +2,8 @@ import { Component, OnInit, Input } from '@angular/core';
 import { IWpComment, IWpPost } from 'app/interfaces/wp-rest-types';
 import { WpRestService } from 'app/services/wp-rest.service';
 
+// this form handles the collection and submission of post comments
+
 @Component({
   selector: 'ngwp-comment-form',
   templateUrl: './comment-form.component.html',

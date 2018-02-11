@@ -6,7 +6,7 @@
 
   <ngwp-content [content]="postContent" ></ngwp-content>
 
-  <form *ngIf="showPasswordForm" #passwordForm="ngForm" (ngSubmit)="onSubmit()">
+  <form *ngIf="showPasswordForm" #passwordForm="ngForm" (ngSubmit)="onSubmitPassword()">
     <h4>This post is password protected</h4>
     <input type="password" [(ngModel)]="password" name="password" placeholder="password" required/>
     <button type="submit" [disabled]="!passwordForm.form.valid">Submit</button>

@@ -3,21 +3,15 @@ import { Http, Response, RequestOptionsArgs, Headers } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { environment } from '../../environments/environment';
 import {
-  IWpMenuItem,
-  IWpPost,
-  IWpPage,
-  IWpTaxonomy,
-  IWpUser,
-  IWpComment,
-  IWpOptions,
-  IWpId,
-  IWpMedia,
-  IWpError
+  IWpMenuItem, IWpPost, IWpPage, IWpTaxonomy, IWpUser, IWpComment,
+  IWpOptions, IWpId, IWpMedia, IWpError
 } from '../interfaces/wp-rest-types';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/toPromise';
+
+// this service also serves as the global store of client-side data
 
 @Injectable()
 export class WpRestService {
@@ -48,11 +42,17 @@ export class WpRestService {
   public options: Promise<IWpOptions>;
 
   constructor(
-    private http: Http,
+    private _http: Http,
   ) {
     // start debug timer
     // console.time('WpRestService');
+    this.refreshAll();
+    // end debug timer
+    // Promise.all([ this.posts, this.pages, this.media, this.tags, this.categories, this.users, this.options ])
+    //   .then(res => console.timeEnd('WpRestService'));
+  }
 
+  public refreshAll(): void {
     // generate all properties.
     this.refreshOptions();
     this.refreshTags();
@@ -63,17 +63,13 @@ export class WpRestService {
     // these two depend on the others being initlaized
     this.refreshPosts();
     this.refreshPages();
-
-    // end debug timer
-    // Promise.all([ this.posts, this.pages, this.media, this.tags, this.categories, this.users, this.options ])
-    //   .then(res => console.timeEnd('WpRestService'));
   }
 
   public refreshPosts(): void {
     this.posts = this.requestType('posts');
     this.posts = Promise.all([this.posts, this._mediaById, this._tagsById, this._categoriesById, this._usersById])
       .then(res => {
-        let posts = res[0];
+        const posts = res[0];
         const mediaById = res[1];
         const tagsById = res[2];
         const categoriesById = res[3];
@@ -91,13 +87,14 @@ export class WpRestService {
 
           post = this.tryConvertingDates(post);
         });
-        posts = this.putStickyPostsFirst(posts);
-        return posts;
+        const postsReordered = this.putStickyPostsFirst(posts);
+        return postsReordered;
       });
     this._postsById = <Promise<IWpPost[]>>this.orderById(this.posts);
   }
 
   public refreshPages(): void {
+    // TODO: edit router.config so that child/grandchild page routing works
     this.pages = this.requestType('pages');
     this.pages = Promise.all([this.pages, this._mediaById, this._usersById]).then(res => {
       const pages = res[0];
@@ -142,13 +139,26 @@ export class WpRestService {
     this._mediaById = <Promise<IWpMedia[]>>this.orderById(this.media);
   }
 
-  public requestType(type: string): Promise<any> {
-    let store = [];
+  public refreshOptions(): void {
+    this.options = this._http.get(this._ngWp + `options`)
+      .map((res: Response) => res.json())
+      .catch((err: Response | any) => {
+        console.error(err);
+        return Observable.throw(err);
+      })
+      .toPromise();
+    // this.options.then(options => console.log('options', options)); // for debug
+  }
+
+  // recursively calls the WP REST API to get the full set of request data
+  private requestType(type: string): Promise<any> {
+    let set = [];
     return new Promise((resolve, reject) => {
       let page = 1;
-      const perPage = 100; // the max
+      const perPage = 100; // the max allowed by WP
+
       const requestPostSet = () => {
-        this.http
+        this._http
           .get(this._wpRest + `${type}?per_page=${perPage}&page=${page}`)
           .map((res: Response) => res.json())
           .catch((err: Response | any) => {
@@ -157,39 +167,50 @@ export class WpRestService {
             return Observable.throw(err);
           })
           .subscribe((res: any[]) => {
-            store = store.concat(res);
+
+            // add the returned data to the set
+            set = set.concat(res);
+
+            // if the number of returned items matches the number of requested items
             if (res.length === perPage) {
+              // then there are probably more data items, do another request
               page++;
               requestPostSet();
             } else {
               // console.log(type, store); // for debug
-              resolve(store);
+              // we've got all the data, return it
+              resolve(set);
             }
+
           });
       };
       requestPostSet();
     });
   }
 
-
-
-
   public getPostOrPage(slug: string): Promise<IWpPage | IWpPost | undefined> {
+    // TODO: make a map of slugs to posts/pages similar to the ..ById objects
+    // ... and return items from that instead
+
+    // get all the posts and pages and check them one by one until we match our string.
     return Promise.all([this.posts, this.pages]).then(res => {
-      for (let i = 0; i < res.length; i++)
-        for (let j = 0; j < res[i].length; j++)
-          if (slug === res[i][j].slug)
-            return res[i][j];
+      for (let i = 0; i < res.length; i++)       // for both sets: posts and pages
+        for (let j = 0; j < res[i].length; j++)  // for each item within posts or pages
+          if (slug === res[i][j].slug)           // check if the slug matches
+            return res[i][j];                    // return the post/page if it does
+
+      // if nothing matched, return undefined
       return undefined;
+
     });
   }
 
+  // get a post or page that is password protected
   public getPasswordProtected(id: number, password: string): Promise<IWpPage | IWpPost | false> {
     return new Promise<IWpPage | IWpPost | false>((resolve, reject) => {
       this._postsById.then(postsById => {
         const post = postsById[id];
-        this.http
-          .get(post._links.self[0].href, { params: { password: password } })
+        this._http.get(post._links.self[0].href, { params: { password: password } })
           .map((res: Response) => res.json())
           .catch((err: Response) => {
             const wpErr: IWpError = err.json();
@@ -197,6 +218,7 @@ export class WpRestService {
             return Observable.throw(wpErr);
           })
           .forEach(postRes => {
+            // add the newly returned content and excerpt to the post and return the post
             post.content = postRes.content;
             post.excerpt = postRes.excerpt;
             resolve(post);
@@ -205,6 +227,7 @@ export class WpRestService {
     });
   }
 
+  // get the posts that are before and after the requested post in the posts array
   public getAdjcentPosts(slug: string): Promise<{
     previous: IWpPost | undefined;
     next: IWpPost | undefined;
@@ -227,8 +250,28 @@ export class WpRestService {
 
   public getPosts(type?: 'tag' | 'category' | 'author' | 'search', slug?: string): Promise<(IWpPage | IWpPost)[]> {
 
-    if (type == null || slug == null) return this.posts;
+    // return all posts if there are no filter parameters
+    if (type == null || slug == null)
+      return this.posts;
 
+    // if we are seaching, return all pages and posts that contain the slug string
+    if (type === 'search')
+      return Promise.all([this.posts, this.pages])
+      .then(res => {
+        let posts = res[0];
+        let pages = res[1];
+        const searchTerm = new RegExp(slug, 'i');
+        posts = posts.filter(post => {
+          return searchTerm.test(post.content.rendered) || searchTerm.test(post.title.rendered);
+        });
+        pages = pages.filter(page => {
+          return searchTerm.test(page.content.rendered) || searchTerm.test(page.title.rendered);
+        });
+        // TODO: reorder by date.
+        return posts.concat(<IWpPost[]>pages);
+      });
+
+    // set the filter parameters
     let prop: string;
     let set: Promise<(IWpUser | IWpTaxonomy)[]>;
     switch (type) {
@@ -244,22 +287,9 @@ export class WpRestService {
         prop = 'author';
         set = this.users;
         break;
-      case 'search':
-        return Promise.all([this.posts, this.pages])
-          .then(res => {
-            let posts = res[0];
-            let pages = res[1];
-            const searchTerm = new RegExp(slug, 'i');
-            posts = posts.filter(post => {
-              return searchTerm.test(post.content.rendered) || searchTerm.test(post.title.rendered);
-            });
-            pages = pages.filter(page => {
-              return searchTerm.test(page.content.rendered) || searchTerm.test(page.title.rendered);
-            });
-            return posts.concat(<IWpPost[]>pages);
-          });
     }
 
+    // return a filtered version of the posts
     return Promise.all([this.posts, set])
       .then(res => {
         const posts = res[0];
@@ -278,8 +308,9 @@ export class WpRestService {
 
   }
 
+  // get a menu from the https://wordpress.org/plugins/wp-api-menus/ plugin endpoint
   public getMenu(name: string): Observable<IWpMenuItem[]> {
-    return this.http
+    return this._http
       .get(this._wpMenus + `menu-locations/${name}`)
       .map((res: Response) => res.json())
       .catch((err: Response | any) => {
@@ -288,26 +319,13 @@ export class WpRestService {
       });
   }
 
-
-  public refreshOptions(): void {
-    this.options = this.http
-      .get(this._ngWp + `options`)
-      .map((res: Response) => res.json())
-      .catch((err: Response | any) => {
-        console.error(err);
-        return Observable.throw(err);
-      })
-      .toPromise();
-    // this.options.then(options => console.log('options', options)); // for debug
-  }
-
-
+  // get the comments of a specified post
   public getComments(post: IWpPage, password?: string): Promise<IWpComment[]> {
     // TODO: maybe save the comments somehow?
 
     const requestObj = password ? { params: { password: password } } : undefined;
 
-    const commentsRequest: Promise<IWpComment[]> = this.http
+    const commentsRequest: Promise<IWpComment[]> = this._http
       .get(post._links.replies[0].href + '&per_page=100', requestObj)
       .map((res: Response) => res.json())
       .catch((err: Response | any) => {
@@ -328,6 +346,7 @@ export class WpRestService {
     });
   }
 
+  // try to submit a comment
   public postComment(newComment: {
     author_email: string;
     author_name: string;
@@ -336,7 +355,8 @@ export class WpRestService {
     post: number;
     parent?: number;
   }): void {
-
+    // I can't figure out how to submit a valid nonce with this post request
+    // the only way this works is with a rest_allow_anonymous_comments filter in functions.php
     this.options.then(options => {
 
       const body = {
@@ -351,15 +371,17 @@ export class WpRestService {
         // meta:	[]
       };
 
-      this.http.post(this._wpRest + 'comments', body)
+      this._http.post(this._wpRest + 'comments', body)
         .map((res: Response) => res.json())
         .toPromise()
         .then(res => {
           console.log(res);
+          return res;
         }, err => console.log(err));
     });
   }
 
+  // return an array where the ids are keys to Wp objects
   private orderById(promise: Promise<IWpId[]>): Promise<IWpId[]> {
     return promise.then(items => {
       const itemsById: (IWpId | undefined)[] = [];
@@ -368,6 +390,7 @@ export class WpRestService {
     });
   }
 
+  // convert string dates to Date objects
   private tryConvertingDates<T>(obj: T): T {
     const item: any = obj;
     if (item.date) item.date = new Date(item.date);
@@ -377,6 +400,7 @@ export class WpRestService {
     return item;
   }
 
+  // if the WP API Menu plugin isn't active, return an error message
   private checkForMenuApiErr(err: Response | any): string | any {
     if (err._body && err._body.match(/^[\{\{]/i)) {
       const errJson = err.json();
@@ -402,7 +426,9 @@ export class WpRestService {
     return posts;
   }
 
+  // nest reply comments under their parents
   private generateCommentHeiarchy(comments: IWpComment[]): IWpComment[] {
+    // TODO: test this more, it might produce unexpected results
     comments.forEach(comment => comment.children = []);
     comments.forEach(comment => {
       if (comment.parent === 0) return;

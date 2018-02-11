@@ -131,6 +131,7 @@
 	}
 
 	// need this in order to post comments from the rest api
+	// maybe wouldn't need it if you can figure out how to use a nonce here
 	add_filter('rest_allow_anonymous_comments', '__return_true');
 
 	// WIDGETS //
