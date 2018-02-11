@@ -25,7 +25,7 @@
         <ngwp-comment-form *ngIf="comment.formOpen" [post]="post" [parent]="comment"></ngwp-comment-form>
         <button *ngIf="!comment.formOpen" (click)="openCommentReply(comment)">Reply!</button>
         <button *ngIf="comment.formOpen" (click)="closeCommentReply(comment)">Cancel</button>
-        <ul *ngIf="comment.children.length > 0">
+        <ul *ngIf="comment.children?.length > 0">
           <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: comment.children }"></ng-container>
         </ul>
       </li>

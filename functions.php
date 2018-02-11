@@ -129,6 +129,8 @@
 			// 'nonce' => wp_create_nonce( 'wp_rest' )
 		));
 	}
+
+	// need this in order to post comments from the rest api
 	add_filter('rest_allow_anonymous_comments', '__return_true');
 
 	// WIDGETS //

@@ -16,13 +16,13 @@ To push the project to the server, run `ng build --prod --deploy-url="/wp-conten
 
 This project will play nice with the Angular CLI.
 
-## Contributions
 
+## Contributions
 Pull requests always welcome
 - Do not use any css
 
+
 ## TODOs:
-- test in aot
 - refactor
     - move commments into wprestservice
 - comment on code
@@ -39,12 +39,13 @@ Pull requests always welcome
 - [widgets](https://wordpress.org/plugins/wp-rest-api-sidebars/)
     - [custom templates](https://wordpress.stackexchange.com/questions/97411/code-for-recent-posts-widget)
 
+
 ### Routing:
 - ROUTES TO POST/PAGE
     - `/{post-or-page-slug}/` 👍
-    - `/{post-slug}/page/{page-number}/` 
+    - `/{post-slug}/page/{page-number}/`
     - `/{post-slug}/comment-page-{number}/#comments` 👎 this doesn't work because we can't match partial route params in a string
-    - `/{post-slug}/comment-page/{comment-page-number}` 👍
+        - `/{post-slug}/comment-page/{comment-page-number}` 👍 this works, however
     - `/{page-slug}/{child-page-slug}/{grandchild-page-slug}/{ect...}`
 - ROUTES TO LIST
     - `/` 👍
@@ -52,10 +53,9 @@ Pull requests always welcome
     - `/category|tag|author/{category-slug|tag-slug|author-slug}/` 👍
     - `/category|tag|author/{category-slug|tag-slug|author-slug}/page/{page-number}/` 👍
     - `/?s={search-term}` 👍
-    - `/page/{page-number}/?s={search-term}` 👍
+    - `/page/{page-number}/?s={search-term}` 👍 
 - BACKEND
     - `/wp-admin/*` 👍
 - TODOs:
-    - password protected stuff ??
     - change tag and category base
     - change permalink file

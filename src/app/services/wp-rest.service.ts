@@ -50,6 +50,7 @@ export class WpRestService {
   constructor(
     private http: Http,
   ) {
+    // start debug timer
     // console.time('WpRestService');
 
     // generate all properties.
@@ -59,50 +60,40 @@ export class WpRestService {
     this.refreshUsers();
     this.refreshMedia();
 
+    // these two depend on the others being initlaized
     this.refreshPosts();
     this.refreshPages();
 
-    // Promise.all([
-    //   this.posts,
-    //   this.pages,
-    //   this.media,
-    //   this.tags,
-    //   this.categories,
-    //   this.users,
-    //   this.options
-    // ]).then(res => console.timeEnd('WpRestService'));
+    // end debug timer
+    // Promise.all([ this.posts, this.pages, this.media, this.tags, this.categories, this.users, this.options ])
+    //   .then(res => console.timeEnd('WpRestService'));
   }
 
   public refreshPosts(): void {
     this.posts = this.requestType('posts');
-    this.posts = Promise.all([this.posts, this._mediaById, this._tagsById, this._categoriesById, this._usersById]).then(res => {
-      const posts = res[0];
-      const mediaById = res[1];
-      const tagsById = res[2];
-      const categoriesById = res[3];
-      const usersById = res[4];
-      posts.forEach(post => {
-        post.tags_ref = [];
-        post.categories_ref = [];
-        post.tags.forEach(tagId => post.tags_ref.push(tagsById[tagId]));
-        post.categories.forEach(categoryId => post.categories_ref.push(categoriesById[categoryId]));
-        post.author_ref = usersById[post.author];
-        post.featured_media_ref = mediaById[post.featured_media];
-        post = this.tryConvertingDates(post);
-      });
+    this.posts = Promise.all([this.posts, this._mediaById, this._tagsById, this._categoriesById, this._usersById])
+      .then(res => {
+        let posts = res[0];
+        const mediaById = res[1];
+        const tagsById = res[2];
+        const categoriesById = res[3];
+        const usersById = res[4];
+        posts.forEach(post => {
 
-      // put sticky posts first in the array
-      let stickyCount = 0;
-      posts.forEach((post, i) => {
-        if (post.sticky) {
-          posts.splice(i, 1);
-          posts.splice(stickyCount, 0, post);
-          stickyCount++;
-        }
-      });
+          post.tags_ref = [];
+          post.tags.forEach(tagId => post.tags_ref.push(tagsById[tagId]));
 
-      return posts;
-    });
+          post.categories_ref = [];
+          post.categories.forEach(categoryId => post.categories_ref.push(categoriesById[categoryId]));
+
+          post.author_ref = usersById[post.author];
+          post.featured_media_ref = mediaById[post.featured_media];
+
+          post = this.tryConvertingDates(post);
+        });
+        posts = this.putStickyPostsFirst(posts);
+        return posts;
+      });
     this._postsById = <Promise<IWpPost[]>>this.orderById(this.posts);
   }
 
@@ -151,16 +142,6 @@ export class WpRestService {
     this._mediaById = <Promise<IWpMedia[]>>this.orderById(this.media);
   }
 
-
-  private orderById(promise: Promise<IWpId[]>): Promise<IWpId[]> {
-    return promise.then(items => {
-      const itemsById: (IWpId | undefined)[] = [];
-      items.forEach(item => itemsById[item.id] = item);
-      return itemsById;
-    });
-  }
-
-
   public requestType(type: string): Promise<any> {
     let store = [];
     return new Promise((resolve, reject) => {
@@ -181,7 +162,7 @@ export class WpRestService {
               page++;
               requestPostSet();
             } else {
-              // console.log(type, store);
+              // console.log(type, store); // for debug
               resolve(store);
             }
           });
@@ -191,18 +172,9 @@ export class WpRestService {
   }
 
 
-  private tryConvertingDates<T>(obj: T): T {
-    const item: any = obj;
-    if (item.date) item.date = new Date(item.date);
-    if (item.date_gmt) item.date_gmt = new Date(item.date_gmt);
-    if (item.modified) item.modified = new Date(item.modified);
-    if (item.modified_gmt) item.modified_gmt = new Date(item.modified_gmt);
-    return item;
-  }
 
 
   public getPostOrPage(slug: string): Promise<IWpPage | IWpPost | undefined> {
-    // this.getPasswordProtected(1168, 'enter');
     return Promise.all([this.posts, this.pages]).then(res => {
       for (let i = 0; i < res.length; i++)
         for (let j = 0; j < res[i].length; j++)
@@ -306,20 +278,6 @@ export class WpRestService {
 
   }
 
-
-  private checkForMenuApiErr(err: Response | any): string | any {
-    if (err._body && err._body.match(/^[\{\{]/i)) {
-      const errJson = err.json();
-      if (errJson.code && errJson.code === `rest_no_route`) {
-        return errJson.message + `
-            The menu API requires the 'WP API Menus' plugin to be installed and activated.
-            https://wordpress.org/plugins/wp-api-menus/`;
-      }
-    }
-    return err;
-  }
-
-
   public getMenu(name: string): Observable<IWpMenuItem[]> {
     return this.http
       .get(this._wpMenus + `menu-locations/${name}`)
@@ -340,13 +298,12 @@ export class WpRestService {
         return Observable.throw(err);
       })
       .toPromise();
-    // this.options.then(options => console.log('options', options));
+    // this.options.then(options => console.log('options', options)); // for debug
   }
 
 
   public getComments(post: IWpPage, password?: string): Promise<IWpComment[]> {
-    // maybe save the comments somehow?
-    // console.log(post._links.replies[0].href);
+    // TODO: maybe save the comments somehow?
 
     const requestObj = password ? { params: { password: password } } : undefined;
 
@@ -366,10 +323,10 @@ export class WpRestService {
         comment.author_ref = usersById[comment.author];
         comment = this.tryConvertingDates(comment);
       });
-      return comments;
+      const hierarchicalComments = this.generateCommentHeiarchy(comments);
+      return hierarchicalComments;
     });
   }
-
 
   public postComment(newComment: {
     author_email: string;
@@ -382,29 +339,15 @@ export class WpRestService {
 
     this.options.then(options => {
 
-      // console.log(options.nonce);
-
-      // https://stackoverflow.com/a/42352967/5648839
-      // const headers: RequestOptionsArgs = {
-      //   headers: new Headers({
-      //     'X-WP-Nonce': options.nonce,
-      //     // 'Access-Control-Allow-Headers': Authorization, Content-Type
-      //   })
-      // };
-
       const body = {
-        // author: comment.author,
         author_email: newComment.author_email,
-        // author_ip: '',
         author_name: newComment.author_name,
         author_url: newComment.author_url,
         author_user_agent: window.navigator.userAgent,
         content: { raw: newComment.content, },
-        // date:	new Date(Date.now()).toLocaleString()
         date_gmt: new Date(Date.now()).toISOString(),
         parent: newComment.parent,
-        post: newComment.post,
-        // status: 'approved', // ???
+        post: newComment.post
         // meta:	[]
       };
 
@@ -415,6 +358,60 @@ export class WpRestService {
           console.log(res);
         }, err => console.log(err));
     });
+  }
+
+  private orderById(promise: Promise<IWpId[]>): Promise<IWpId[]> {
+    return promise.then(items => {
+      const itemsById: (IWpId | undefined)[] = [];
+      items.forEach(item => itemsById[item.id] = item);
+      return itemsById;
+    });
+  }
+
+  private tryConvertingDates<T>(obj: T): T {
+    const item: any = obj;
+    if (item.date) item.date = new Date(item.date);
+    if (item.date_gmt) item.date_gmt = new Date(item.date_gmt);
+    if (item.modified) item.modified = new Date(item.modified);
+    if (item.modified_gmt) item.modified_gmt = new Date(item.modified_gmt);
+    return item;
+  }
+
+  private checkForMenuApiErr(err: Response | any): string | any {
+    if (err._body && err._body.match(/^[\{\{]/i)) {
+      const errJson = err.json();
+      if (errJson.code && errJson.code === `rest_no_route`) {
+        return errJson.message + `
+          The menu API requires the 'WP API Menus' plugin to be installed and activated.
+          https://wordpress.org/plugins/wp-api-menus/
+        `;
+      }
+    }
+    return err;
+  }
+
+  private putStickyPostsFirst(posts: IWpPost[]): IWpPost[] {
+    let stickyCount = 0;
+    posts.forEach((post, i) => {
+      if (post.sticky) {
+        posts.splice(i, 1);
+        posts.splice(stickyCount, 0, post);
+        stickyCount++;
+      }
+    });
+    return posts;
+  }
+
+  private generateCommentHeiarchy(comments: IWpComment[]): IWpComment[] {
+    comments.forEach(comment => comment.children = []);
+    comments.forEach(comment => {
+      if (comment.parent === 0) return;
+      comments.find(parentComment => {
+        return parentComment.id === comment.parent;
+      }).children.push(comment);
+    });
+    comments = comments.filter(comment => comment.parent === 0);
+    return comments;
   }
 
 }

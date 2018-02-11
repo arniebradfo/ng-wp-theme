@@ -9,16 +9,13 @@ import { ActivatedRoute, Params } from '@angular/router';
 })
 export class PostListComponent implements OnInit {
 
-  posts: (IWpPost | IWpPage)[];
-  tagsById: (IWpTaxonomy | undefined)[];
-  categoriesById: (IWpTaxonomy | undefined)[];
-
-  error: string;
-  postsPerPage: number;
-  pageNumber: number;
-  pageCount: number[];
-  routerPrefix: string = '';
-  queryParams: { [key: string]: string; } = {};
+  public posts: (IWpPost | IWpPage)[];
+  public error: string;
+  public postsPerPage: number;
+  public pageNumber: number;
+  public pageCount: number[];
+  public routerPrefix: string = '';
+  public queryParams: { [key: string]: string; } = {};
 
   constructor(
     private wpRestService: WpRestService,

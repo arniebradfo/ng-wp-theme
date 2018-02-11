@@ -23,8 +23,8 @@ import { Router, ActivatedRoute, Params } from '@angular/router';
 export class PostComponent implements OnInit {
 
   post: IWpPage | IWpPost;
-  comments: IWpCommentExtended[];
-  allComments: IWpCommentExtended[];
+  comments: IWpComment[];
+  allComments: IWpComment[];
   error: any;
   postContent: SafeHtml;
   adjcentPosts: { next: IWpPost; previous: IWpPost; };
@@ -55,12 +55,12 @@ export class PostComponent implements OnInit {
     });
   }
 
-  public openCommentReply(comment: IWpCommentExtended): void {
+  public openCommentReply(comment: IWpComment): void {
     this.closeAllCommentForms();
     comment.formOpen = true;
   }
 
-  public closeCommentReply(comment: IWpCommentExtended): void {
+  public closeCommentReply(comment: IWpComment): void {
     comment.formOpen = false;
     this.rootCommentFormOpen = true;
   }
@@ -110,8 +110,7 @@ export class PostComponent implements OnInit {
       this.wpRestService.getComments(this.post, this.password),
       this.wpRestService.options
     ]).then(res => {
-      this.allComments = res[0];
-      const comments = this.generateCommentHeiarchy(this.allComments);
+      const comments = this.allComments = res[0];
 
       const options = res[1];
       this.commentsPerPage = options.reading.posts_per_page;
@@ -123,22 +122,4 @@ export class PostComponent implements OnInit {
     });
   }
 
-  private generateCommentHeiarchy(comments: IWpCommentExtended[]): IWpCommentExtended[] {
-    // TODO: test this more, move to rest service
-    comments.forEach(comment => comment.children = []);
-    comments.forEach(comment => {
-      if (comment.parent === 0) return;
-      comments.find(parentComment => {
-        return parentComment.id === comment.parent;
-      }).children.push(comment);
-    });
-    comments = comments.filter(comment => comment.parent === 0);
-    return comments;
-  }
-
-}
-
-interface IWpCommentExtended extends IWpComment {
-  children?: IWpCommentExtended[];
-  formOpen?: boolean;
 }

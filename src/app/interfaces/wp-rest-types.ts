@@ -161,7 +161,8 @@ export interface IWpComment extends IWpId {
             post_type: 'post' | 'page'
         }[];
     };
-    // children?: IWpComment[];
+    children?: IWpComment[];
+    formOpen?: boolean;
 }
 
 export interface IWpOptions {
