@@ -1,20 +1,10 @@
 import {
   Component,
   OnInit,
-  ComponentFactoryResolver,
-  ViewContainerRef,
-  AfterViewInit,
-  ElementRef,
-  Renderer2,
-  ApplicationRef,
-  Injector,
-  EmbeddedViewRef,
-  OnDestroy
 } from '@angular/core';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { IWpPost, IWpPage, IWpComment, IWpError } from 'app/interfaces/wp-rest-types';
 import { WpRestService } from 'app/services/wp-rest.service';
-import { Router, ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'ngwp-post',
@@ -22,28 +12,24 @@ import { Router, ActivatedRoute, Params } from '@angular/router';
 })
 export class PostComponent implements OnInit {
 
-  post: IWpPage | IWpPost;
-  comments: IWpComment[];
-  allComments: IWpComment[];
-  error: any;
-  postContent: SafeHtml;
-  adjcentPosts: { next: IWpPost; previous: IWpPost; };
-  commentsPerPage: number;
-  commentsPageCount: number[];
-  commentsPageNumber: number;
-  rootCommentFormOpen: boolean = true;
-  password: string;
-  showPasswordForm: boolean = false;
-  errorMessage: string;
+  public post: IWpPage | IWpPost;
+  public adjcentPosts: { next: IWpPost; previous: IWpPost; };
+  public postContent: string;
+  public errorMessage: string;
+
+  public comments: IWpComment[];
+  private allComments: IWpComment[];
+  private commentsPerPage: number;
+  private commentsPageNumber: number;
+  public commentsPageCount: number[];
+  public rootCommentFormOpen: boolean = true;
+
+  public password: string;
+  public showPasswordForm: boolean = false;
 
   constructor(
     private wpRestService: WpRestService,
     private activatedRoute: ActivatedRoute,
-    private domSanitizer: DomSanitizer,
-    private componentFactoryResolver: ComponentFactoryResolver,
-    private renderer: Renderer2,
-    private injector: Injector,
-    private applicationRef: ApplicationRef
   ) { }
 
   ngOnInit() {

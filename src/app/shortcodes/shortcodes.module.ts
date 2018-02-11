@@ -15,7 +15,7 @@ import { ExampleTwoComponent, ExampleComponent } from './example/example.compone
  * LIMITATIONS OF "EMBEDDABLE" COMPONENTS:
  * - cannot bind to dynamic @Input properties
  * - cannot interact with component content with @ContentChild
- * - cannot nest embeddable components
+ * - cannot nest embeddable components (maybe...)
  * - no lazy loading (maybe...)
  * - CAN use an embeddable as a wrapper for a fully functional component
  *

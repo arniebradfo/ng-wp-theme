@@ -3,7 +3,6 @@ import {
   DoCheck, ElementRef, EventEmitter, Injector, Input, OnDestroy,
   Output, ViewEncapsulation
 } from '@angular/core';
-
 import { EmbeddableComponentsService } from '../../shortcodes/shortcodes.module';
 
 // based on: https://github.com/wardbell/ng-dynamic-app/blob/master/src/app/docviewer/docviewer.component.ts

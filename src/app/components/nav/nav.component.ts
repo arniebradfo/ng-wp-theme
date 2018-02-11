@@ -15,7 +15,6 @@ export class NavComponent implements OnInit {
 
   constructor(
     private wpRestService: WpRestService,
-    // private route: ActivatedRoute, // will need this later
   ) { }
 
   private getMenus() {
