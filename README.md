@@ -21,41 +21,7 @@ This project will play nice with the Angular CLI.
 Pull requests always welcome
 - Do not use any css
 
-
-## TODOs:
-- refactor
-    - move commments into wprestservice
-- comment on code
-- readme
-
-
-### TODOs: less important
-- what to do when network fails?
-- [oembed?](https://codex.wordpress.org/Embeds)
-- multi page post pagination
-- child page routing
-- use date and time formatting from options obj:
-    - map [Anuglar date pipe](https://angular.io/api/common/DatePipe) to [php date formatting](https://codex.wordpress.org/Formatting_Date_and_Time)
-- [widgets](https://wordpress.org/plugins/wp-rest-api-sidebars/)
-    - [custom templates](https://wordpress.stackexchange.com/questions/97411/code-for-recent-posts-widget)
-
-
-### Routing:
-- ROUTES TO POST/PAGE
-    - `/{post-or-page-slug}/` 👍
-    - `/{post-slug}/page/{page-number}/`
-    - `/{post-slug}/comment-page-{number}/#comments` 👎 this doesn't work because we can't match partial route params in a string
-        - `/{post-slug}/comment-page/{comment-page-number}` 👍 this works, however
-    - `/{page-slug}/{child-page-slug}/{grandchild-page-slug}/{ect...}`
-- ROUTES TO LIST
-    - `/` 👍
-    - `/page/{page-number}/` 👍
-    - `/category|tag|author/{category-slug|tag-slug|author-slug}/` 👍
-    - `/category|tag|author/{category-slug|tag-slug|author-slug}/page/{page-number}/` 👍
-    - `/?s={search-term}` 👍
-    - `/page/{page-number}/?s={search-term}` 👍 
-- BACKEND
-    - `/wp-admin/*` 👍
-- TODOs:
-    - change tag and category base
-    - change permalink file
+## Links
+- [WP REST API](https://developer.wordpress.org/rest-api/)
+- [Menus for WP REST API](https://wordpress.org/plugins/wp-api-menus/)
+- ["Embeddable" Angular Components](https://github.com/wardbell/ng-dynamic-app) [video](https://www.youtube.com/watch?v=__H65AsA_bE&feature=youtu.be&t=2h14m13s)
